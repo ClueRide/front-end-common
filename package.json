@@ -1,12 +1,17 @@
 {
   "name": "front-end-common",
   "version": "0.0.1",
-  "author": "Ionic Framework",
-  "homepage": "http://ionicframework.com/",
+  "author": "Clue Ride",
+  "homepage": "https://clueride.com/",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "private": true,
   "scripts": {
     "clean": "ionic-app-scripts clean",
     "build": "ionic-app-scripts build",
+    "build-ngc": "ngc",
+    "tsc-npm": "tsc -p tsconfig.npm.json",
+    "watch": "rm -rf aot dist && npm run ngc",
     "lint": "ionic-app-scripts lint",
     "ionic:build": "ionic-app-scripts build",
     "ionic:serve": "ionic-app-scripts serve"
