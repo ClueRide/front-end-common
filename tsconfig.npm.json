@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
-    "declaration": false,
+    "declaration": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "lib": [
@@ -10,6 +10,8 @@
     ],
     "module": "es2015",
     "moduleResolution": "node",
+    "noImplicitAny": false,
+    "outDir": "./dist",
     "sourceMap": true,
     "target": "es5"
   },
@@ -24,5 +26,8 @@
   "compileOnSave": false,
   "atom": {
     "rewriteTsconfig": false
+  },
+  "angularCompileOptions": {
+    "genDir": "aot"
   }
 }
