@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Storage } from "@ionic/storage";
 
+/**
+ * @deprecated use AuthService instead.
+ */
 @Injectable()
 export class TokenService {
   TOKEN_KEY: string = "token.key";
