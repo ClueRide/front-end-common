@@ -18,8 +18,9 @@
     Welcome to Clue Ride Player.
   </div>
   <div *ngIf="!auth.isAuthenticated()">
+    <div id="bddBypass" (click) = "auth.bddLogin()">BDD Target</div>
     <div id="login">
-      This device is not yet registered on the Clue Ride network. Please <a (click)="auth.login()">Log In</a> to continue.
+      This device is not yet registered on the Clue Ride network. Please <a (click)="auth.login()">Register</a> to continue.
     </div>
   </div>
   <div *ngIf="auth.isAuthenticated()">
