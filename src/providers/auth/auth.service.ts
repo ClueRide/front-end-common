@@ -5,6 +5,7 @@ import Auth0 from "auth0-js";
 import {AUTH_CONFIG} from "./auth0-variables";
 import {STORAGE_KEYS} from "../storage-keys";
 import {TokenService} from "../token/token.service";
+import {AuthBddMock} from "./auth.bddMocks";
 
 const auth0Config = {
   // needed for auth0
@@ -53,6 +54,21 @@ export class AuthService {
   public isAuthenticated() {
     const expiresAt = JSON.parse(localStorage.getItem(STORAGE_KEYS.expiresAt));
     return Date.now() < expiresAt;
+  }
+
+  /**
+   * This function is called when performing BDD testing instead of the
+   * regular login which natively calls out to internal browser to
+   * retrieve the Auth0 site -- and thus cannot be tested using BDD tools.
+   *
+   * This simply stuffs a set of tokens where they are expected.
+   */
+  public bddLogin() {
+    let authBddMock: AuthBddMock = new AuthBddMock;
+    this.setIdToken(authBddMock.idToken);
+    this.setAccessToken(authBddMock.accessToken);
+    this.setStorageVariable(STORAGE_KEYS.expiresAt, authBddMock.expiresAt);
+    this.setStorageVariable(STORAGE_KEYS.profile, authBddMock.profile);
   }
 
   public login() {
