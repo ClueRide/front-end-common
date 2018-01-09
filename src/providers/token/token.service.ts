@@ -1,22 +1,39 @@
 import { Injectable } from '@angular/core';
 import { Storage } from "@ionic/storage";
+import {JwtHelper} from "angular2-jwt";
+import {STORAGE_KEYS} from "../storage-keys";
 
 /**
- * @deprecated use AuthService instead.
+ * Provides functionality for working with the app's JWT token
+ * that was obtained using the AuthService and stored locally.
  */
 @Injectable()
 export class TokenService {
   TOKEN_KEY: string = "token.key";
   PRINCIPAL_KEY: string = "principal.key";
   private hasAuthToken: boolean = false;
-  // private jwtHelper: JwtHelper;
+  private jwtHelper: JwtHelper;
   payload;
   token: string;
 
   constructor(
     private storage: Storage
   ) {
-    // this.jwtHelper = new JwtHelper();
+    this.jwtHelper = new JwtHelper();
+  }
+
+  getPayload() {
+    return this.decodePayload(localStorage.getItem(STORAGE_KEYS.jwtToken));
+  }
+
+  useJwtHelper() {
+    var token = localStorage.getItem('token');
+
+    console.log(
+      this.jwtHelper.decodeToken(token),
+      this.jwtHelper.getTokenExpirationDate(token),
+      this.jwtHelper.isTokenExpired(token)
+    );
   }
 
   /**
@@ -80,7 +97,7 @@ export class TokenService {
     return this.payload.email;
   }
 
-  private decodePayload(fullToken: string): any {
+  decodePayload(fullToken: string): any {
     if (!fullToken) {
       throw new Error("passed token is not populated");
     }
@@ -88,12 +105,11 @@ export class TokenService {
     if (parts.length !== 3) {
       throw new Error('JWT must have 3 parts');
     }
-    // let decoded = this.jwtHelper.urlBase64Decode(parts[0]);
-    // if (!decoded) {
-    //   throw new Error('Cannot decode the token');
-    // }
-    // return JSON.parse(decoded);
-    return true;
+    let decoded = this.jwtHelper.urlBase64Decode(parts[1]);
+    if (!decoded) {
+      throw new Error('Cannot decode the token');
+    }
+    return JSON.parse(decoded);
   }
 
   public getBadges() {

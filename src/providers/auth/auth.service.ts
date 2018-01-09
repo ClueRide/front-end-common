@@ -3,6 +3,8 @@ import {Injectable, NgZone} from "@angular/core";
 import Auth0Cordova from "@auth0/cordova";
 import Auth0 from "auth0-js";
 import {AUTH_CONFIG} from "./auth0-variables";
+import {STORAGE_KEYS} from "../storage-keys";
+import {TokenService} from "../token/token.service";
 
 const auth0Config = {
   // needed for auth0
@@ -22,9 +24,12 @@ export class AuthService {
   idToken: string;
   user: any;
 
-  constructor(public zone: NgZone) {
-    this.user = this.getStorageVariable('profile');
-    this.idToken = this.getStorageVariable('id_token');
+  constructor(
+    public tokenService: TokenService,
+    public zone: NgZone
+  ) {
+    this.user = this.getStorageVariable(STORAGE_KEYS.profile);
+    this.idToken = this.getStorageVariable(STORAGE_KEYS.jwtToken);
   }
 
   private getStorageVariable(name) {
@@ -37,16 +42,16 @@ export class AuthService {
 
   private setIdToken(token) {
     this.idToken = token;
-    this.setStorageVariable('id_token', token);
+    this.setStorageVariable(STORAGE_KEYS.jwtToken, token);
   }
 
   private setAccessToken(token) {
     this.accessToken = token;
-    this.setStorageVariable('access_token', token);
+    this.setStorageVariable(STORAGE_KEYS.accessToken, token);
   }
 
   public isAuthenticated() {
-    const expiresAt = JSON.parse(localStorage.getItem('expires_at'));
+    const expiresAt = JSON.parse(localStorage.getItem(STORAGE_KEYS.expiresAt));
     return Date.now() < expiresAt;
   }
 
@@ -54,7 +59,7 @@ export class AuthService {
     const client = new Auth0Cordova(auth0Config);
 
     const options = {
-      scope: 'openid profile offline_access'
+      scope: 'openid profile email offline_access'
     };
 
     client.authorize(options, (err, authResult) => {
@@ -62,21 +67,32 @@ export class AuthService {
         throw err;
       }
 
-      console.log("Auth success with result: " + authResult);
-
       this.setIdToken(authResult.idToken);
       this.setAccessToken(authResult.accessToken);
 
+      let payload = this.tokenService.decodePayload(authResult.idToken);
+      for (let key in payload) {
+        if (payload.hasOwnProperty(key)) {
+          console.log("payload." + key + ": " + payload[key]);
+        }
+      }
+
       const expiresAt = JSON.stringify((authResult.expiresIn * 1000) + new Date().getTime());
-      this.setStorageVariable('expires_at', expiresAt);
+      this.setStorageVariable(STORAGE_KEYS.expiresAt, expiresAt);
 
       this.auth0.client.userInfo(this.accessToken, (err, profile) => {
         if(err) {
           throw err;
         }
 
+        for (let key in profile) {
+          if (profile.hasOwnProperty(key)) {
+            console.log("profile." + key + ": " + profile[key]);
+          }
+        }
+
         profile.user_metadata = profile.user_metadata || {};
-        this.setStorageVariable('profile', profile);
+        this.setStorageVariable(STORAGE_KEYS.profile, profile);
         this.zone.run(() => {
           this.user = profile;
         });
@@ -85,10 +101,10 @@ export class AuthService {
   }
 
   public logout() {
-    window.localStorage.removeItem('profile');
-    window.localStorage.removeItem('access_token');
-    window.localStorage.removeItem('id_token');
-    window.localStorage.removeItem('expires_at');
+    window.localStorage.removeItem(STORAGE_KEYS.profile);
+    window.localStorage.removeItem(STORAGE_KEYS.accessToken);
+    window.localStorage.removeItem(STORAGE_KEYS.jwtToken);
+    window.localStorage.removeItem(STORAGE_KEYS.expiresAt);
 
     this.idToken = null;
     this.accessToken = null;
