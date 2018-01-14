@@ -7,20 +7,29 @@ import {STORAGE_KEYS} from "../storage-keys";
 import {TokenService} from "../token/token.service";
 import {AuthBddMock} from "./auth.bddMocks";
 
-const auth0Config = {
+const auth0SocialConfig = {
   // needed for auth0
-  clientID: AUTH_CONFIG.clientID,
+  clientID: AUTH_CONFIG.clientID.social,
 
   // needed for auth0cordova
-  clientId: AUTH_CONFIG.clientID,
-  domain: AUTH_CONFIG.domain,
-  // callbackURL: location.href,
+  clientId: AUTH_CONFIG.clientID.social,
+  domain: AUTH_CONFIG.domain.social,
+  packageIdentifier: 'com.clueride'
+};
+
+const auth0PasswordlessConfig = {
+  // needed for auth0
+  clientID: AUTH_CONFIG.clientID.passwordless,
+
+  // needed for auth0cordova
+  clientId: AUTH_CONFIG.clientID.passwordless,
+  domain: AUTH_CONFIG.domain.passwordless,
   packageIdentifier: 'com.clueride'
 };
 
 @Injectable()
 export class AuthService {
-  auth0 = new Auth0.WebAuth(auth0Config);
+  auth0: any;
   accessToken: string;
   idToken: string;
   user: any;
@@ -71,11 +80,28 @@ export class AuthService {
     this.setStorageVariable(STORAGE_KEYS.profile, authBddMock.profile);
   }
 
-  public login() {
+  /**
+   * Called when the user wishes to register using an email
+   * account associated with their existing Social Media account.
+   */
+  public registerSocial() {
+    this.register(auth0SocialConfig);
+  }
+
+  /**
+   * Called when the user wishes to register using an email
+   * account provided by user and confirmed via Auth0.
+   */
+  public registerPasswordless() {
+    this.register(auth0PasswordlessConfig);
+  }
+
+  public register(auth0Config) {
     const client = new Auth0Cordova(auth0Config);
+    this.auth0 = new Auth0.WebAuth(auth0Config);
 
     const options = {
-      scope: 'openid profile email offline_access'
+      scope: 'openid profile email'
     };
 
     client.authorize(options, (err, authResult) => {
