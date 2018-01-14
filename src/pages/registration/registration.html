@@ -15,14 +15,9 @@
 
 <ion-content padding>
   <div id="welcome">
-    Welcome to Clue Ride Player.
+    Welcome to Clue Ride.
   </div>
-  <div *ngIf="!auth.isAuthenticated()">
-    <div id="bddBypass" (click) = "auth.bddLogin()">BDD Target</div>
-    <div id="login">
-      This device is not yet registered on the Clue Ride network. Please <a (click)="auth.login()">Register</a> to continue.
-    </div>
-  </div>
+
   <div *ngIf="auth.isAuthenticated()">
     <div>
       You're good to go.
@@ -30,5 +25,28 @@
     <div id="logout">
       <a (click)="auth.logout()">Log Out</a>
     </div>
+  </div>
+
+  <div *ngIf="!auth.isAuthenticated()">
+    <div id="bddBypass" (click) = "auth.bddLogin()">BDD Target</div>
+
+    <div>
+      This device is not yet registered on the Clue Ride network.
+      Registering your device involves confirming the email address
+      under which earned badges will be awarded. Your choice of
+      registration method should be based on which email you want to
+      present any badges you may earn.
+    </div>
+
+    <div id="register-social">
+      Click <a (click)="auth.registerSocial()">Register via Social Media</a> to specify which
+      account's email to use for receiving and presenting badges.
+    </div>
+
+    <div id="register-passwordless">
+      Click <a (click)="auth.registerPasswordless()">Register via Email</a> to specify
+      an exact email to receive and present badges.
+    </div>
+
   </div>
 </ion-content>
