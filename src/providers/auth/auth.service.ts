@@ -6,6 +6,7 @@ import {AUTH_CONFIG} from "./auth0-variables";
 import {STORAGE_KEYS} from "../storage-keys";
 import {TokenService} from "../token/token.service";
 import {AuthBddMock} from "./auth.bddMocks";
+import {ProfileService} from "../profile/profile.service";
 
 const auth0SocialConfig = {
   // needed for auth0
@@ -36,6 +37,7 @@ export class AuthService {
 
   constructor(
     public tokenService: TokenService,
+    public profileService: ProfileService,
     public zone: NgZone
   ) {
     this.user = this.getStorageVariable(STORAGE_KEYS.profile);
@@ -78,6 +80,12 @@ export class AuthService {
     this.setAccessToken(authBddMock.accessToken);
     this.setStorageVariable(STORAGE_KEYS.expiresAt, authBddMock.expiresAt);
     this.setStorageVariable(STORAGE_KEYS.profile, authBddMock.profile);
+    this.profileService.confirm(
+      {
+        authenticated: true,
+        confirmed: false
+      }
+    );
   }
 
   /**
@@ -133,6 +141,13 @@ export class AuthService {
           }
         }
 
+        this.profileService.confirm(
+          {
+            authenticated: true,
+            confirmed: false
+          }
+        );
+
         profile.user_metadata = profile.user_metadata || {};
         this.setStorageVariable(STORAGE_KEYS.profile, profile);
         this.zone.run(() => {
@@ -151,6 +166,17 @@ export class AuthService {
     this.idToken = null;
     this.accessToken = null;
     this.user = null;
+  }
+
+  public prodMode() {
+    console.log(window.location.toString());
+    console.log(
+      "indexOf: " + (window.location.toString().indexOf('http://localhost:8100'))
+    );
+
+    return !(
+      window.location.toString().indexOf('http://localhost:8100') === 0
+    );
   }
 
 }

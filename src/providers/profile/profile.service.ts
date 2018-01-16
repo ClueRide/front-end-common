@@ -10,6 +10,8 @@ import {TokenService} from "../token/token.service";
  */
 @Injectable()
 export class ProfileService {
+  confirmed: boolean = false;
+  listeners: ConfirmationListener[] = [];
 
   constructor (
     private tokenService: TokenService
@@ -19,11 +21,38 @@ export class ProfileService {
 
   public getPrincipal(): string {
     let payload = this.tokenService.getPayload();
-    return payload.email;
+    if (payload) {
+      return payload.email;
+    }
+    return "";
   }
 
   public getUserImageUrl(): string {
-    return this.tokenService.getPayload().picture;
+    let payload = this.tokenService.getPayload();
+    if (payload) {
+      return payload.picture;
+    }
+    return "";
   }
 
+  public isConfirmed(): boolean {
+    return this.confirmed;
+  }
+
+  public confirm(confirmationState: ConfirmationState) {
+    this.confirmed = confirmationState.confirmed;
+    for (let listener of this.listeners) {
+      listener.canWeSwitch(confirmationState);
+    }
+  }
+
+}
+
+export interface ConfirmationListener {
+  canWeSwitch: (event: any) => any
+}
+
+export class ConfirmationState {
+  authenticated: boolean = false;
+  confirmed: boolean = false;
 }
