@@ -23,7 +23,10 @@ export class TokenService {
   }
 
   getPayload() {
-    return this.decodePayload(localStorage.getItem(STORAGE_KEYS.jwtToken));
+    let token = localStorage.getItem(STORAGE_KEYS.jwtToken);
+    if (token) {
+      return this.decodePayload(token);
+    }
   }
 
   useJwtHelper() {
