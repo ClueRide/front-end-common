@@ -10,7 +10,6 @@ import {STORAGE_KEYS} from "../storage-keys";
 @Injectable()
 export class TokenService {
   TOKEN_KEY: string = "token.key";
-  PRINCIPAL_KEY: string = "principal.key";
   private hasAuthToken: boolean = false;
   private jwtHelper: JwtHelper;
   payload;
@@ -93,7 +92,7 @@ export class TokenService {
    * @returns {string}
    */
   public getBearerToken(): string {
-    return this.token;
+    return JSON.parse(window.localStorage.getItem(STORAGE_KEYS.jwtToken))
   }
 
   public getPrincipalName(): string {
