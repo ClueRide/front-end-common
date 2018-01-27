@@ -45,9 +45,5 @@ export class RegistrationPage implements ConfirmationListener {
     }
   }
 
-  public confirmed(): boolean {
-    return this.profile.isConfirmed();
-  }
-
 }
 
