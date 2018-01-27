@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
-import { Storage } from "@ionic/storage";
+import {Injectable} from "@angular/core";
 import {JwtHelper} from "angular2-jwt";
 import {STORAGE_KEYS} from "../storage-keys";
+import {BddMockToken} from "./bddMockToken";
+import {ProfileService} from "../profile/profile.service";
 
 /**
  * Provides functionality for working with the app's JWT token
@@ -9,82 +10,16 @@ import {STORAGE_KEYS} from "../storage-keys";
  */
 @Injectable()
 export class TokenService {
-  TOKEN_KEY: string = "token.key";
-  private hasAuthToken: boolean = false;
   private jwtHelper: JwtHelper;
-  payload;
-  token: string;
 
+  payload;
+  profileService: ProfileService;
+  token: string;
   constructor(
-    private storage: Storage
+    profileService: ProfileService
   ) {
     this.jwtHelper = new JwtHelper();
-  }
-
-  getPayload() {
-    let token = localStorage.getItem(STORAGE_KEYS.jwtToken);
-    if (token) {
-      return this.decodePayload(token);
-    }
-  }
-
-  useJwtHelper() {
-    var token = localStorage.getItem('token');
-
-    console.log(
-      this.jwtHelper.decodeToken(token),
-      this.jwtHelper.getTokenExpirationDate(token),
-      this.jwtHelper.isTokenExpired(token)
-    );
-  }
-
-  /**
-   * When invoked, attempts to find a locally-stored session token and place it in local cache.
-   * @returns {Promise<string>}
-   */
-  public loadToken(): Promise<string> {
-    let tokenStoragePromise: Promise<string> = this.storage.get(this.TOKEN_KEY);
-
-    tokenStoragePromise.then(
-      (token) => {
-        this.updateToken(token);
-      }
-    );
-
-    return tokenStoragePromise;
-  }
-
-  private updateToken(token: string) {
-    this.token = token;
-    if(token) {
-      return this.cacheToken(token);
-    } else {
-      this.hasAuthToken = false;
-      this.payload = {
-        badges: [],
-        guest: true,
-        email: "guest.dummy@clueride.com"
-      };
-      return this.payload;
-    }
-  }
-
-  private cacheToken(authToken: string) {
-    this.token = authToken;
-    this.payload = this.decodePayload(authToken);
-    /* if decodePayload doesn't throw any errors, we can assume it has found a valid token. */
-    this.hasAuthToken = true;
-    return this.payload;
-  }
-
-  /**
-   * Immediately (synchronously) verify we can parse the token and asynchronously persist the token.
-   * @param authToken
-   * @returns {Promise<any>}
-   */
-  public setAuthToken(authToken: string) {
-    this.cacheToken(authToken);
-    return this.storage.set(this.TOKEN_KEY, authToken);
+    this.profileService = profileService;
   }
 
   /**
@@ -95,10 +30,6 @@ export class TokenService {
     return JSON.parse(window.localStorage.getItem(STORAGE_KEYS.jwtToken))
   }
 
-  public getPrincipalName(): string {
-    return this.payload.email;
-  }
-
   decodePayload(fullToken: string): any {
     if (!fullToken) {
       throw new Error("passed token is not populated");
@@ -107,48 +38,76 @@ export class TokenService {
     if (parts.length !== 3) {
       throw new Error('JWT must have 3 parts');
     }
+    /* throws exception if problem decoding. */
     let decoded = this.jwtHelper.urlBase64Decode(parts[1]);
-    if (!decoded) {
-      throw new Error('Cannot decode the token');
-    }
     return JSON.parse(decoded);
   }
 
-  public getBadges() {
-    return this.payload.badges;
-  }
-
-  public isGuest() {
-    return (!this.payload || this.payload.guest);
+  setExpiresAtFromPayload(payloadExpAttribute: string): void {
+    let expiresAtMilliseconds = JSON.parse(payloadExpAttribute) * 1000;
+    window.localStorage.setItem(
+      STORAGE_KEYS.expiresAt,
+      JSON.stringify(expiresAtMilliseconds)
+    );
   }
 
   /**
    * Removes all credential information from the Store.
    * @returns {Promise<null>}
    */
-  public clear() {
-    return (this.storage.clear());
+  public clearToken() {
+    window.localStorage.removeItem(STORAGE_KEYS.profile);
+    window.localStorage.removeItem(STORAGE_KEYS.accessToken);
+    window.localStorage.removeItem(STORAGE_KEYS.jwtToken);
+    window.localStorage.removeItem(STORAGE_KEYS.expiresAt);
+  }
+
+  public getExpiresAtMilliseconds(): number {
+    return JSON.parse(window.localStorage.getItem(STORAGE_KEYS.expiresAt));
+  }
+
+  private setStorageVariable(name, data) {
+    window.localStorage.setItem(name, JSON.stringify(data));
+  }
+
+  public setIdToken(token) {
+    this.payload = this.decodePayload(token);
+    this.setStorageVariable(
+      STORAGE_KEYS.profile,
+      JSON.stringify(this.payload)
+    );
+
+    this.setExpiresAtFromPayload(this.payload.exp);
+
+    this.profileService.confirm(
+      {
+        authenticated: true,
+        confirmed: false
+      }
+    );
+
+    this.profileService.setProfile(this.payload);
+
+    this.setStorageVariable(STORAGE_KEYS.jwtToken, token);
+  }
+
+  public setAccessToken(token) {
+    this.setStorageVariable(STORAGE_KEYS.accessToken, token);
   }
 
   /**
-   * If we're setup as a guest, then no, the user is not logged in and should be able to do so.
-   * @returns {boolean}
+   * This function is called when performing BDD testing instead of the
+   * regular login which natively calls out to internal browser to
+   * retrieve the Auth0 site -- and thus cannot be tested using BDD tools.
+   *
+   * This simply stuffs a set of tokens where they are expected.
    */
-  public isLoggedIn() {
-    return !this.payload.guest;
-  }
-
-  public hasToken() {
-    return this.hasAuthToken;
-  }
-
-  /**
-   * Ends the session by providing empty token -- as if the app is started the first time.
-   */
-  public logout() {
-    this.hasAuthToken = false;
-    this.updateToken(null);
-    return this.storage.remove(this.TOKEN_KEY);
+  public bddRegister() {
+    let bddMockToken: BddMockToken = new BddMockToken;
+    this.setIdToken(bddMockToken.idToken);
+    this.setAccessToken(bddMockToken.accessToken);
+    this.setStorageVariable(STORAGE_KEYS.expiresAt, bddMockToken.expiresAt);
+    this.setStorageVariable(STORAGE_KEYS.profile, bddMockToken.profile);
   }
 
 }

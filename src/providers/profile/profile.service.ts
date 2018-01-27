@@ -2,7 +2,6 @@
  * Created by jett on 1/8/18.
  */
 import {Injectable} from "@angular/core";
-import {TokenService} from "../token/token.service";
 
 /**
  * Knows about the profile portion of the JWT token obtained
@@ -12,27 +11,28 @@ import {TokenService} from "../token/token.service";
 export class ProfileService {
   confirmed: boolean = false;
   listeners: ConfirmationListener[] = [];
+  profile: any;
 
   constructor (
-    private tokenService: TokenService
   ) {
-
   }
 
   public getPrincipal(): string {
-    let payload = this.tokenService.getPayload();
-    if (payload) {
-      return payload.email;
+    if (this.profile) {
+      return this.profile.email;
     }
     return "";
   }
 
   public getUserImageUrl(): string {
-    let payload = this.tokenService.getPayload();
-    if (payload) {
-      return payload.picture;
+    if (this.profile) {
+      return this.profile.picture;
     }
     return "";
+  }
+
+  public setProfile(profile) {
+    this.profile = profile;
   }
 
   public isConfirmed(): boolean {
