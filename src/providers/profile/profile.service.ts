@@ -24,6 +24,20 @@ export class ProfileService {
     return "";
   }
 
+  public getGivenName(): string {
+    if (this.profile) {
+      return this.profile.given_name;
+    }
+    return "";
+  }
+
+  public getFullName(): string {
+    if (this.profile) {
+      return this.profile.name;
+    }
+    return "";
+  }
+
   public getUserImageUrl(): string {
     if (this.profile) {
       return this.profile.picture;

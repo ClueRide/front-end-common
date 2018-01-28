@@ -20,6 +20,10 @@ export class TokenService {
   ) {
     this.jwtHelper = new JwtHelper();
     this.profileService = profileService;
+    this.payload = JSON.parse(
+      window.localStorage.getItem(STORAGE_KEYS.profile)
+    );
+    profileService.setProfile(this.payload);
   }
 
   /**
@@ -74,7 +78,7 @@ export class TokenService {
     this.payload = this.decodePayload(token);
     this.setStorageVariable(
       STORAGE_KEYS.profile,
-      JSON.stringify(this.payload)
+      this.payload
     );
 
     this.setExpiresAtFromPayload(this.payload.exp);
