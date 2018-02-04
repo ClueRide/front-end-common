@@ -1,3 +1,4 @@
+// tslint:disable-next-line
 import {ModuleWithProviders, NgModule} from '@angular/core';
 import {IonicStorageModule} from "@ionic/storage";
 import {AuthService} from "../providers/auth/auth.service";

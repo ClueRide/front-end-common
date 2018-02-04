@@ -26,12 +26,7 @@ export class RegistrationPage implements ConfirmationListener {
     profile.listeners.push(this);
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad RegistrationPage');
-  }
-
   public canWeSwitch(confirmationState: ConfirmationState) {
-    console.log(confirmationState);
     if (confirmationState.authenticated && !confirmationState.confirmed) {
       this.navCtrl.push(ConfirmPage)
         .then()
