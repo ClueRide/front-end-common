@@ -37,18 +37,41 @@ describe('Services: TokenService', () => {
 
   describe("bddRegister", () => {
 
-    it("should place configured valid tokens into storage", () => {
+    it("should place valid ID token into storage", () => {
       /* make call */
       toTest.bddRegister();
 
       /* verify results */
       expect(window.localStorage.getItem(STORAGE_KEYS.jwtToken)).toContain(bddMockToken.idToken);
+    });
+
+    it("should place valid access token into storage", () => {
+      /* make call */
+      toTest.bddRegister();
+
+      /* verify results */
       expect(window.localStorage.getItem(STORAGE_KEYS.accessToken)).toContain(bddMockToken.accessToken);
-      expect(window.localStorage.getItem(STORAGE_KEYS.profile)).toContain(bddMockToken.profile);
+    });
+
+    it("should place valid profile object into storage", () => {
+      /* make call */
+      toTest.bddRegister();
+
+      /* verify results */
+      let profile = JSON.parse(window.localStorage.getItem(STORAGE_KEYS.profile));
+      expect(profile.email).toEqual(bddMockToken.profile.email);
+      expect(profile.picture).toEqual(bddMockToken.profile.picture);
+    });
+
+    it("should place valid expiration time into storage", () => {
+      /* make call */
+      toTest.bddRegister();
+
+      /* verify results */
       expect(window.localStorage.getItem(STORAGE_KEYS.expiresAt)).not.toBeNull();
     });
 
-  });
+});
 
   describe("setIdToken", () => {
     it("should place the ID token into storage", () => {

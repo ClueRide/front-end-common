@@ -3,6 +3,7 @@ import {Injectable} from "@angular/core";
 import Auth0Cordova from "@auth0/cordova";
 import {AUTH_CONFIG} from "./auth0-variables";
 import {TokenService} from "../token/token.service";
+import {AuthState} from "./auth-state";
 
 const auth0SocialConfig = {
   // needed for auth0
@@ -42,6 +43,17 @@ export class AuthService {
     return Date.now() < expiresAt;
   }
 
+  public getRegistrationState(): AuthState {
+    let ninetyDays = 86400 * 1000 * 90;
+    if (this.isAuthenticated()) {
+      return AuthState.REGISTERED;
+    }
+    if (this.tokenService.getExpiresAtMilliseconds() + ninetyDays > Date.now()) {
+      return AuthState.EXPIRED;
+    }
+    return AuthState.UNREGISTERED;
+  }
+
   /**
    * Called when the user wishes to register using an email
    * account associated with their existing Social Media account.
@@ -58,7 +70,7 @@ export class AuthService {
     this.register(auth0PasswordlessConfig);
   }
 
-  public register(auth0Config) {
+  private register(auth0Config) {
     const client = new Auth0Cordova(auth0Config);
     const options = {
       scope: 'openid profile email'
@@ -71,6 +83,23 @@ export class AuthService {
 
       this.tokenService.setIdToken(authResult.idToken);
       this.tokenService.setAccessToken(authResult.accessToken);
+    });
+  }
+
+  /**
+   * Attempt to obtain a new set of tokens for the expired token
+   * this device currently holds.
+   */
+  public renew() {
+    const client = new Auth0Cordova(auth0SocialConfig);
+
+    client.checkSession({}, (err, authResult) => {
+      if (err) {
+        console.log(err);
+      } else {
+        this.tokenService.setIdToken(authResult.idToken);
+        this.tokenService.setAccessToken(authResult.accessToken);
+      }
     });
   }
 
