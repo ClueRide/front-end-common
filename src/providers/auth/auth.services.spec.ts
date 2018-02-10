@@ -6,6 +6,8 @@ import {Platform} from "ionic-angular";
 import {ProfileService} from "../profile/profile.service";
 import {AuthState} from "./auth-state";
 import {STORAGE_KEYS} from "../storage-keys";
+import {SecureStorage} from "@ionic-native/secure-storage";
+import {SecureStorageMock} from "@ionic-native-mocks/secure-storage";
 /**
  * Created by jett on 2/5/18.
  */
@@ -21,6 +23,12 @@ describe("Services: AuthService", () => {
         AuthService,
         ComponentsModule,
         ProfileService,
+        {
+          provide: SecureStorage,
+          useClass: SecureStorageMock,
+          deps: [SecureStorageMock]
+        },
+        SecureStorageMock,
         TokenService,
         Platform
       ],

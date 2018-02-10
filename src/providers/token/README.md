@@ -1,6 +1,6 @@
 # Responsibilities
 Token Service knows about the JWT token that supports the
-Auth service:
+AuthService:
 - Accepting a Token after authentication to indicate registering 
 the device.
 - Storage between sessions and retrieval when starting new session.
@@ -20,7 +20,8 @@ new token would be needed:
   - Token expired
 - ProfileService receives the updated user details from the token
 - localStorage to persist the token.
+- Cordova Native Secure Storage for keeping the sensitive data.
 
-Note that clients of this module would ask the Auth service if
-the session has been registered and ask the Auth service to de-register
+Note that clients of this module would ask the AuthService if
+the session has been registered and ask the AuthService to de-register
 (logout).

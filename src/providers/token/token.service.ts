@@ -3,6 +3,7 @@ import {JwtHelper} from "angular2-jwt";
 import {STORAGE_KEYS} from "../storage-keys";
 import {BddMockToken} from "./bddMockToken";
 import {ProfileService} from "../profile/profile.service";
+import {SecureStorage, SecureStorageObject} from "@ionic-native/secure-storage";
 
 /**
  * Provides functionality for working with the app's JWT token
@@ -13,10 +14,14 @@ export class TokenService {
   private jwtHelper: JwtHelper;
 
   payload;
+  secureStorage: SecureStorage;
+  secureStorageObject: SecureStorageObject;
   profileService: ProfileService;
   token: string;
+
   constructor(
-    profileService: ProfileService
+    profileService: ProfileService,
+    secureStorage: SecureStorage
   ) {
     this.jwtHelper = new JwtHelper();
     this.profileService = profileService;
@@ -24,6 +29,25 @@ export class TokenService {
       window.localStorage.getItem(STORAGE_KEYS.profile)
     );
     profileService.setProfile(this.payload);
+    this.secureStorage = secureStorage;
+  }
+
+  /**
+   * Allows clients to be assured the Storage has been setup
+   * prior to using the storage.
+   */
+  init(): Promise<void> {
+    let promise:Promise<void> = this.secureStorage.create('com.clueride').then(
+      (ssObject: SecureStorageObject) => {
+        this.secureStorageObject = ssObject;
+      }
+    ).catch(
+      (err) => {
+        console.log("creating secure storage: " + err);
+      }
+    );
+
+    return promise;
   }
 
   /**
@@ -99,6 +123,14 @@ export class TokenService {
     this.setStorageVariable(STORAGE_KEYS.accessToken, token);
   }
 
+  public setRenewalToken(token) {
+    this.secureStorageObject.set(STORAGE_KEYS.renewalToken, token);
+  }
+
+  getRenewalToken() {
+    return this.secureStorageObject.get(STORAGE_KEYS.renewalToken);
+  }
+
   /**
    * This function is called when performing BDD testing instead of the
    * regular login which natively calls out to internal browser to
@@ -113,5 +145,4 @@ export class TokenService {
     this.setStorageVariable(STORAGE_KEYS.expiresAt, bddMockToken.expiresAt);
     this.setStorageVariable(STORAGE_KEYS.profile, bddMockToken.profile);
   }
-
 }

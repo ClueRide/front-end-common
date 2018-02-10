@@ -3,6 +3,7 @@ interface StorageKeySet {
   jwtToken: string;
   accessToken: string;
   expiresAt: string;
+  renewalToken: string;
 }
 
 /**
@@ -14,5 +15,6 @@ export const STORAGE_KEYS: StorageKeySet = {
   profile: 'profile',
   jwtToken: 'id_token',
   accessToken: 'access_token',
-  expiresAt: 'expires_at'
+  expiresAt: 'expires_at',
+  renewalToken: 'renewal_token'
 }

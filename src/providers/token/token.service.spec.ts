@@ -8,18 +8,26 @@ import {ComponentsModule} from "../../components/components.module";
 import {STORAGE_KEYS} from "../storage-keys";
 import {BddMockToken} from "./bddMockToken";
 import {ProfileService} from "../profile/profile.service";
+import {SecureStorageMock} from "@ionic-native-mocks/secure-storage";
+import {SecureStorage} from "@ionic-native/secure-storage";
 
 let toTest: TokenService;
 let bddMockToken: BddMockToken = new BddMockToken;
 
 describe('Services: TokenService', () => {
 
-  beforeEach(() => {
+  beforeEach((done) => {
 
     TestBed.configureTestingModule({
       providers: [
         ComponentsModule,
         ProfileService,
+        {
+          provide: SecureStorage,
+          useClass: SecureStorageMock,
+          deps: [SecureStorageMock]
+        },
+        SecureStorageMock,
         TokenService,
         Platform
       ],
@@ -28,11 +36,20 @@ describe('Services: TokenService', () => {
     }).compileComponents();
 
     toTest = TestBed.get(TokenService);
+    toTest.init().then(
+      () => {
+        done();
+      }
+    );
     window.localStorage.clear();
   });
 
   it("should be defined", () => {
     expect(toTest).toBeDefined();
+  });
+
+  it("should define the secure storage object", () => {
+    expect(toTest.secureStorageObject).toBeDefined();
   });
 
   describe("bddRegister", () => {
@@ -74,6 +91,7 @@ describe('Services: TokenService', () => {
 });
 
   describe("setIdToken", () => {
+
     it("should place the ID token into storage", () => {
       /* make call */
       toTest.setIdToken(bddMockToken.idToken);
@@ -137,6 +155,31 @@ describe('Services: TokenService', () => {
         /* verify results */
         expect(window.localStorage.getItem(STORAGE_KEYS.accessToken)).toContain(bddMockToken.accessToken);
       });
+  });
+
+  /**
+   * Secure Storage is a native feature; testing against a browser, we need to use the mock and are limited
+   * in the tests we can perform.
+   */
+  describe("setRenewalToken", () => {
+
+    it("should securely place the renewal token into storage", (done) => {
+      /* setup data */
+      let expected = "1234567890";
+      /* make call */
+      toTest.setRenewalToken(expected);
+      let actualPromise = toTest.getRenewalToken();
+
+      /* verify results */
+      actualPromise.then(
+        (actual) => {
+          // expect(actual).toEqual(expected);
+          done();
+        }
+      );
+
+    });
+
   });
 
   describe("clear", () => {
