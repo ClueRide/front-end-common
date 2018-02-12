@@ -3,7 +3,7 @@ import {JwtHelper} from "angular2-jwt";
 import {STORAGE_KEYS} from "../storage-keys";
 import {BddMockToken} from "./bddMockToken";
 import {ProfileService} from "../profile/profile.service";
-import {SecureStorage, SecureStorageObject} from "@ionic-native/secure-storage";
+import {REGISTRATION_TYPE} from "../auth/registration-type";
 
 /**
  * Provides functionality for working with the app's JWT token
@@ -14,14 +14,11 @@ export class TokenService {
   private jwtHelper: JwtHelper;
 
   payload;
-  secureStorage: SecureStorage;
-  secureStorageObject: SecureStorageObject;
   profileService: ProfileService;
   token: string;
 
   constructor(
-    profileService: ProfileService,
-    secureStorage: SecureStorage
+    profileService: ProfileService
   ) {
     this.jwtHelper = new JwtHelper();
     this.profileService = profileService;
@@ -29,25 +26,6 @@ export class TokenService {
       window.localStorage.getItem(STORAGE_KEYS.profile)
     );
     profileService.setProfile(this.payload);
-    this.secureStorage = secureStorage;
-  }
-
-  /**
-   * Allows clients to be assured the Storage has been setup
-   * prior to using the storage.
-   */
-  init(): Promise<void> {
-    let promise:Promise<void> = this.secureStorage.create('com.clueride').then(
-      (ssObject: SecureStorageObject) => {
-        this.secureStorageObject = ssObject;
-      }
-    ).catch(
-      (err) => {
-        console.log("creating secure storage: " + err);
-      }
-    );
-
-    return promise;
   }
 
   /**
@@ -88,6 +66,7 @@ export class TokenService {
     window.localStorage.removeItem(STORAGE_KEYS.accessToken);
     window.localStorage.removeItem(STORAGE_KEYS.jwtToken);
     window.localStorage.removeItem(STORAGE_KEYS.expiresAt);
+    window.localStorage.removeItem(STORAGE_KEYS.registrationType);
   }
 
   public getExpiresAtMilliseconds(): number {
@@ -123,12 +102,15 @@ export class TokenService {
     this.setStorageVariable(STORAGE_KEYS.accessToken, token);
   }
 
-  public setRenewalToken(token) {
-    this.secureStorageObject.set(STORAGE_KEYS.renewalToken, token);
+  public getRegistrationType(): string {
+    return JSON.parse(window.localStorage.getItem(STORAGE_KEYS.registrationType));
   }
 
-  getRenewalToken() {
-    return this.secureStorageObject.get(STORAGE_KEYS.renewalToken);
+  public setRegistrationType(registrationType: string) {
+    this.setStorageVariable(
+      STORAGE_KEYS.registrationType,
+      registrationType
+    );
   }
 
   /**
@@ -144,5 +126,6 @@ export class TokenService {
     this.setAccessToken(bddMockToken.accessToken);
     this.setStorageVariable(STORAGE_KEYS.expiresAt, bddMockToken.expiresAt);
     this.setStorageVariable(STORAGE_KEYS.profile, bddMockToken.profile);
+    this.setStorageVariable(STORAGE_KEYS.registrationType, REGISTRATION_TYPE.SOCIAL);
   }
 }

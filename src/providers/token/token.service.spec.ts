@@ -10,13 +10,14 @@ import {BddMockToken} from "./bddMockToken";
 import {ProfileService} from "../profile/profile.service";
 import {SecureStorageMock} from "@ionic-native-mocks/secure-storage";
 import {SecureStorage} from "@ionic-native/secure-storage";
+import {REGISTRATION_TYPE} from "../auth/registration-type";
 
 let toTest: TokenService;
 let bddMockToken: BddMockToken = new BddMockToken;
 
 describe('Services: TokenService', () => {
 
-  beforeEach((done) => {
+  beforeEach(() => {
 
     TestBed.configureTestingModule({
       providers: [
@@ -36,20 +37,11 @@ describe('Services: TokenService', () => {
     }).compileComponents();
 
     toTest = TestBed.get(TokenService);
-    toTest.init().then(
-      () => {
-        done();
-      }
-    );
     window.localStorage.clear();
   });
 
   it("should be defined", () => {
     expect(toTest).toBeDefined();
-  });
-
-  it("should define the secure storage object", () => {
-    expect(toTest.secureStorageObject).toBeDefined();
   });
 
   describe("bddRegister", () => {
@@ -157,27 +149,30 @@ describe('Services: TokenService', () => {
       });
   });
 
-  /**
-   * Secure Storage is a native feature; testing against a browser, we need to use the mock and are limited
-   * in the tests we can perform.
-   */
-  describe("setRenewalToken", () => {
+  describe("setRegistrationType", () => {
 
-    it("should securely place the renewal token into storage", (done) => {
-      /* setup data */
-      let expected = "1234567890";
+    it("should record the given registration type", () => {
       /* make call */
-      toTest.setRenewalToken(expected);
-      let actualPromise = toTest.getRenewalToken();
+      toTest.setRegistrationType(REGISTRATION_TYPE.SOCIAL);
 
       /* verify results */
-      actualPromise.then(
-        (actual) => {
-          // expect(actual).toEqual(expected);
-          done();
-        }
-      );
+      window.localStorage.getItem(STORAGE_KEYS.registrationType);
+    });
 
+  });
+
+  describe("getRegistrationType", () => {
+
+    it("should retrieve the correct value", () => {
+      /* setup data */
+      let expected: string = REGISTRATION_TYPE.SOCIAL;
+      toTest.setRegistrationType(expected);
+
+      /* make call */
+      let actual = toTest.getRegistrationType();
+
+      /* verify results */
+      expect(actual).toEqual(expected);
     });
 
   });

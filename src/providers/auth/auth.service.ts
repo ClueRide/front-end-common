@@ -1,21 +1,25 @@
 import {Injectable} from "@angular/core";
 
+import {WebAuth} from "auth0-js";
 import Auth0Cordova from "@auth0/cordova";
 import {AUTH_CONFIG} from "./auth0-variables";
 import {TokenService} from "../token/token.service";
 import {AuthState} from "./auth-state";
+import {REGISTRATION_TYPE} from "./registration-type";
 
-const auth0SocialConfig = {
+let auth0Config = {};
+
+auth0Config[REGISTRATION_TYPE.SOCIAL] = {
   // needed for auth0
   clientID: AUTH_CONFIG.clientID.social,
 
-  // needed for auth0cordova
+    // needed for auth0cordova
   clientId: AUTH_CONFIG.clientID.social,
   domain: AUTH_CONFIG.domain.social,
   packageIdentifier: 'com.clueride'
 };
 
-const auth0PasswordlessConfig = {
+auth0Config[REGISTRATION_TYPE.PASSWORDLESS] = {
   // needed for auth0
   clientID: AUTH_CONFIG.clientID.passwordless,
 
@@ -31,6 +35,47 @@ export class AuthService {
   constructor(
     public tokenService: TokenService,
   ) {
+  }
+
+  /**
+   * Uses the registration state to tell if the device has been
+   * registered for this app and allow the caller to present a
+   * different page if registration is required.
+   *
+   * This returns a promise because in the case where we try to
+   * renew the token for a registered device, there is the
+   * possibility that the caller would use an expired token instead
+   * of the one obtained via an asynchronous renewal performed within
+   * this call.
+   * @returns {Promise<boolean>} true if registration is needed.
+   */
+  public checkRegistrationRequired(): Promise<boolean> {
+    return new Promise(
+      (resolve, reject) => {
+        switch (this.getRegistrationState()) {
+          case AuthState.REGISTERED:
+            console.log("App is Registered on this device");
+            resolve(false);
+            break;
+          case AuthState.UNREGISTERED:
+            console.log("App is Unregistered on this device");
+            resolve(true);
+            break;
+          case AuthState.EXPIRED:
+            console.log("Token is expired; attempting to renew");
+            this.renew().then(
+              () => {
+                resolve(false);
+              }
+            ).catch(
+              () => {
+                resolve(true);
+              }
+            );
+            break;
+        }
+      }
+    );
   }
 
   /**
@@ -59,7 +104,8 @@ export class AuthService {
    * account associated with their existing Social Media account.
    */
   public registerSocial() {
-    this.register(auth0SocialConfig);
+    this.logout();    // Clears previous info in case we're changing account
+    this.register(REGISTRATION_TYPE.SOCIAL);
   }
 
   /**
@@ -67,11 +113,12 @@ export class AuthService {
    * account provided by user and confirmed via Auth0.
    */
   public registerPasswordless() {
-    this.register(auth0PasswordlessConfig);
+    this.logout();    // Clears previous info in case we're changing account
+    this.register(REGISTRATION_TYPE.PASSWORDLESS);
   }
 
-  private register(auth0Config) {
-    const client = new Auth0Cordova(auth0Config);
+  private register(registrationType: string) {
+    const client = new Auth0Cordova(auth0Config[registrationType]);
     const options = {
       scope: 'openid profile email'
     };
@@ -83,6 +130,7 @@ export class AuthService {
 
       this.tokenService.setIdToken(authResult.idToken);
       this.tokenService.setAccessToken(authResult.accessToken);
+      this.tokenService.setRegistrationType(registrationType);
     });
   }
 
@@ -91,19 +139,54 @@ export class AuthService {
    * this device currently holds.
    */
   public renew() {
-    const client = new Auth0Cordova(auth0SocialConfig);
+    let registrationType: string = this.tokenService.getRegistrationType();
+    return new Promise(
+      (resolve, reject) => {
 
-    client.checkSession({}, (err, authResult) => {
-      if (err) {
-        console.log(err);
-      } else {
-        this.tokenService.setIdToken(authResult.idToken);
-        this.tokenService.setAccessToken(authResult.accessToken);
+        let client = new Auth0Cordova(auth0Config[registrationType]);
+        let options = {
+          scope: 'openid profile email',
+        };
+
+        client.authorize(options,
+          (err, authResult) => {
+            if (err) {
+              console.log(err);
+              reject(err);
+            } else {
+              this.tokenService.setIdToken(authResult.idToken);
+              this.tokenService.setAccessToken(authResult.accessToken);
+              resolve(false);
+            }
+          }
+        );
+
       }
-    });
+    );
+  }
+
+  private logoutAuth0() {
+    let registrationType: string = this.tokenService.getRegistrationType();
+    /* no need to call auth0 if we don't know what type. */
+    if (registrationType) {
+
+      /* Tell Auth0 we're done with this account */
+      let domain = auth0Config[registrationType].domain;
+      let clientId = auth0Config[registrationType].clientID;
+
+      let webAuth = new WebAuth({
+        domain: domain,
+        clientID: clientId,
+      });
+      webAuth.logout({
+        client_iD: clientId,
+      });
+    }
   }
 
   public logout() {
+    this.logoutAuth0();
+    /* Clear local storage for tokens. */
     this.tokenService.clearToken();
   }
 

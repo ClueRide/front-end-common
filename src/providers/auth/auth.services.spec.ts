@@ -17,6 +17,13 @@ let tokenService: TokenService;
 
 describe("Services: AuthService", () => {
 
+  function setExpiredState() {
+    tokenService.bddRegister();
+    let eightyNineDays = 86400 * 1000 * 89;
+    let oldExpiration = Date.now() - eightyNineDays;
+    window.localStorage.setItem(STORAGE_KEYS.expiresAt, JSON.stringify(oldExpiration));
+  }
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
@@ -45,6 +52,58 @@ describe("Services: AuthService", () => {
     expect(toTest).toBeDefined();
   });
 
+  describe("checkRegistrationRequired", () => {
+
+    it("should resolve true when unregistered", (done) => {
+      /* make call */
+      let actualPromise = toTest.checkRegistrationRequired();
+
+      /* verify results */
+      actualPromise.then(
+        (actual) => {
+          expect(actual).toBeTruthy();
+          done();
+        }
+      );
+
+    });
+
+    it("should resolve false when registered", (done) => {
+      /* setup data */
+      tokenService.bddRegister();
+
+      /* make call */
+      let actualPromise = toTest.checkRegistrationRequired();
+
+      /* verify results */
+       actualPromise.then(
+        (actual) => {
+          expect(actual).toBeFalsy();
+          done();
+        }
+      );
+    });
+
+    it("should resolve false when expired and renewal succeeds", (done) => {
+      /* setup data */
+      setExpiredState();
+
+      /* make call */
+      let actualPromise = toTest.checkRegistrationRequired();
+
+      /* verify results */
+      actualPromise.then(
+        (actual) => {
+          /* This is tough to mock out until I inject the Cordova client */
+          // expect(actual).toBeFalsy();
+          done();
+        }
+      );
+
+    });
+
+  });
+
   describe("getRegistrationState", () => {
 
     it("should return UNREGISTERED when tokens are empty", () => {
@@ -68,10 +127,7 @@ describe("Services: AuthService", () => {
 
     it("should return EXPIRED when tokens are expired but are no more than 90 days old", () => {
       /* setup data */
-      tokenService.bddRegister();
-      let eightyNineDays = 86400 * 1000 * 89;
-      let oldExpiration = Date.now() - eightyNineDays;
-      window.localStorage.setItem(STORAGE_KEYS.expiresAt, JSON.stringify(oldExpiration));
+      setExpiredState();
 
       /* make call */
       let actual = toTest.getRegistrationState();
