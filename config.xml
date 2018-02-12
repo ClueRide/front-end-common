@@ -89,4 +89,5 @@
         <variable name="ANDROID_HOST" value="clueride.auth0.com" />
         <variable name="ANDROID_PATHPREFIX" value="/cordova/com.clueride/callback" />
     </plugin>
+    <plugin name="cordova-plugin-secure-storage" spec="^2.6.8" />
 </widget>

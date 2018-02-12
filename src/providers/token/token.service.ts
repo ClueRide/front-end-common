@@ -3,6 +3,7 @@ import {JwtHelper} from "angular2-jwt";
 import {STORAGE_KEYS} from "../storage-keys";
 import {BddMockToken} from "./bddMockToken";
 import {ProfileService} from "../profile/profile.service";
+import {REGISTRATION_TYPE} from "../auth/registration-type";
 
 /**
  * Provides functionality for working with the app's JWT token
@@ -15,6 +16,7 @@ export class TokenService {
   payload;
   profileService: ProfileService;
   token: string;
+
   constructor(
     profileService: ProfileService
   ) {
@@ -64,6 +66,7 @@ export class TokenService {
     window.localStorage.removeItem(STORAGE_KEYS.accessToken);
     window.localStorage.removeItem(STORAGE_KEYS.jwtToken);
     window.localStorage.removeItem(STORAGE_KEYS.expiresAt);
+    window.localStorage.removeItem(STORAGE_KEYS.registrationType);
   }
 
   public getExpiresAtMilliseconds(): number {
@@ -99,6 +102,17 @@ export class TokenService {
     this.setStorageVariable(STORAGE_KEYS.accessToken, token);
   }
 
+  public getRegistrationType(): string {
+    return JSON.parse(window.localStorage.getItem(STORAGE_KEYS.registrationType));
+  }
+
+  public setRegistrationType(registrationType: string) {
+    this.setStorageVariable(
+      STORAGE_KEYS.registrationType,
+      registrationType
+    );
+  }
+
   /**
    * This function is called when performing BDD testing instead of the
    * regular login which natively calls out to internal browser to
@@ -112,6 +126,6 @@ export class TokenService {
     this.setAccessToken(bddMockToken.accessToken);
     this.setStorageVariable(STORAGE_KEYS.expiresAt, bddMockToken.expiresAt);
     this.setStorageVariable(STORAGE_KEYS.profile, bddMockToken.profile);
+    this.setStorageVariable(STORAGE_KEYS.registrationType, REGISTRATION_TYPE.SOCIAL);
   }
-
 }

@@ -8,6 +8,9 @@ import {ComponentsModule} from "../../components/components.module";
 import {STORAGE_KEYS} from "../storage-keys";
 import {BddMockToken} from "./bddMockToken";
 import {ProfileService} from "../profile/profile.service";
+import {SecureStorageMock} from "@ionic-native-mocks/secure-storage";
+import {SecureStorage} from "@ionic-native/secure-storage";
+import {REGISTRATION_TYPE} from "../auth/registration-type";
 
 let toTest: TokenService;
 let bddMockToken: BddMockToken = new BddMockToken;
@@ -20,6 +23,12 @@ describe('Services: TokenService', () => {
       providers: [
         ComponentsModule,
         ProfileService,
+        {
+          provide: SecureStorage,
+          useClass: SecureStorageMock,
+          deps: [SecureStorageMock]
+        },
+        SecureStorageMock,
         TokenService,
         Platform
       ],
@@ -37,20 +46,44 @@ describe('Services: TokenService', () => {
 
   describe("bddRegister", () => {
 
-    it("should place configured valid tokens into storage", () => {
+    it("should place valid ID token into storage", () => {
       /* make call */
       toTest.bddRegister();
 
       /* verify results */
       expect(window.localStorage.getItem(STORAGE_KEYS.jwtToken)).toContain(bddMockToken.idToken);
+    });
+
+    it("should place valid access token into storage", () => {
+      /* make call */
+      toTest.bddRegister();
+
+      /* verify results */
       expect(window.localStorage.getItem(STORAGE_KEYS.accessToken)).toContain(bddMockToken.accessToken);
-      expect(window.localStorage.getItem(STORAGE_KEYS.profile)).toContain(bddMockToken.profile);
+    });
+
+    it("should place valid profile object into storage", () => {
+      /* make call */
+      toTest.bddRegister();
+
+      /* verify results */
+      let profile = JSON.parse(window.localStorage.getItem(STORAGE_KEYS.profile));
+      expect(profile.email).toEqual(bddMockToken.profile.email);
+      expect(profile.picture).toEqual(bddMockToken.profile.picture);
+    });
+
+    it("should place valid expiration time into storage", () => {
+      /* make call */
+      toTest.bddRegister();
+
+      /* verify results */
       expect(window.localStorage.getItem(STORAGE_KEYS.expiresAt)).not.toBeNull();
     });
 
-  });
+});
 
   describe("setIdToken", () => {
+
     it("should place the ID token into storage", () => {
       /* make call */
       toTest.setIdToken(bddMockToken.idToken);
@@ -114,6 +147,34 @@ describe('Services: TokenService', () => {
         /* verify results */
         expect(window.localStorage.getItem(STORAGE_KEYS.accessToken)).toContain(bddMockToken.accessToken);
       });
+  });
+
+  describe("setRegistrationType", () => {
+
+    it("should record the given registration type", () => {
+      /* make call */
+      toTest.setRegistrationType(REGISTRATION_TYPE.SOCIAL);
+
+      /* verify results */
+      window.localStorage.getItem(STORAGE_KEYS.registrationType);
+    });
+
+  });
+
+  describe("getRegistrationType", () => {
+
+    it("should retrieve the correct value", () => {
+      /* setup data */
+      let expected: string = REGISTRATION_TYPE.SOCIAL;
+      toTest.setRegistrationType(expected);
+
+      /* make call */
+      let actual = toTest.getRegistrationType();
+
+      /* verify results */
+      expect(actual).toEqual(expected);
+    });
+
   });
 
   describe("clear", () => {
