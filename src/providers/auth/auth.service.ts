@@ -16,7 +16,7 @@ auth0Config[REGISTRATION_TYPE.SOCIAL] = {
     // needed for auth0cordova
   clientId: AUTH_CONFIG.clientID.social,
   domain: AUTH_CONFIG.domain.social,
-  packageIdentifier: 'com.clueride'
+  packageIdentifier: 'com.clueride.client'  // Not obvious that this is used to build callback URL.
 };
 
 auth0Config[REGISTRATION_TYPE.PASSWORDLESS] = {
@@ -26,7 +26,7 @@ auth0Config[REGISTRATION_TYPE.PASSWORDLESS] = {
   // needed for auth0cordova
   clientId: AUTH_CONFIG.clientID.passwordless,
   domain: AUTH_CONFIG.domain.passwordless,
-  packageIdentifier: 'com.clueride'
+  packageIdentifier: 'com.clueride.client'  // Not obvious that this is used to build callback URL.
 };
 
 @Injectable()
@@ -97,6 +97,20 @@ export class AuthService {
       return AuthState.EXPIRED;
     }
     return AuthState.UNREGISTERED;
+  }
+
+  /**
+   * The callback URL is built from the "packageIdentifier" that is set in the
+   * Config object. However, we need to set this from the client rather than this
+   * library function.
+   *
+   * NOTE: the scheme needs to also be configured in the 'customurlscheme' plugin and
+   * on the Auth0 website's list of valid callback URLs.
+   * @param scheme - matches the client's unique package identifier.
+   */
+  public setUrlScheme(scheme: string) {
+    auth0Config[REGISTRATION_TYPE.SOCIAL].packageIdentifier = scheme;
+    auth0Config[REGISTRATION_TYPE.PASSWORDLESS].packageIdentifier = scheme;
   }
 
   /**
