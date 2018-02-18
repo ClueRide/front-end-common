@@ -7,7 +7,6 @@ interface AuthConfig {
     social: string,
     passwordless: string
   };
-  callbackURL: string;
 }
 
 export const AUTH_CONFIG: AuthConfig = {
@@ -19,5 +18,4 @@ export const AUTH_CONFIG: AuthConfig = {
     social: 'clueride-social.auth0.com',
     passwordless: 'clueride.auth0.com'
   },
-  callbackURL: 'com.clueride://clueride.auth0.com/cordova/com.clueride/callback'
 };
