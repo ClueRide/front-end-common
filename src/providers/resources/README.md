@@ -53,8 +53,6 @@ _Modeled after examples in "Starter Guide" for http://ngx-restangular.com/ _
 
 - Created a separate service which is configured inside a 
 service.provider file.
-- Using a namespace to avoid name collisions (Location popped out as a 
-collision) (TODO: Move away from namespaces -- hard to export when supporting module sharing).
 
 # Testing
 Resources fall under the category of "Services". Along with Pipes, Services are generally
