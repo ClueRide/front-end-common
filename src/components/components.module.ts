@@ -11,6 +11,9 @@ import {Resource} from "../providers/resources/resource";
 import {RestangularModule} from "ngx-restangular";
 import {RestangularConfigFactory} from "../providers/resources/resource.config";
 import {TokenService} from "../providers/token/token.service";
+import {GeoLocService} from "../providers/geo-loc/geo-loc";
+import {DeviceGeoLocService} from "../providers/device-geo-loc/device-geo-loc.service";
+import {LatLonProvider} from "../providers/lat-lon/lat-lon";
 
 @NgModule({
   imports: [
@@ -31,6 +34,9 @@ export class ComponentsModule {
       providers: [
         AuthService,
         BadgeService,
+        DeviceGeoLocService,
+        GeoLocService,
+        LatLonProvider,
         ProfileService,
         TokenService
       ]
