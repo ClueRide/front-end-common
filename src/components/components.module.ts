@@ -5,6 +5,8 @@ import {AuthService} from "../providers/auth/auth.service";
 import {BadgeService} from "../providers/resources/badge/badge.service";
 import {BadgeServiceProvider} from "../providers/resources/badge/badge.service.provider";
 import {ConfirmPageModule} from "../pages/confirm/confirm.module";
+import {InviteService} from "../providers/resources/invite/invite.service";
+import {InviteServiceProvider} from "../providers/resources/invite/invite.service.provider";
 import {ProfileService} from "../providers/profile/profile.service";
 import {RegistrationPageModule} from "../pages/registration/registration.module";
 import {Resource} from "../providers/resources/resource";
@@ -24,6 +26,7 @@ import {LatLonProvider} from "../providers/lat-lon/lat-lon";
   ],
   providers: [
     BadgeServiceProvider,
+    InviteServiceProvider,
     Resource
   ]
 })
@@ -36,6 +39,7 @@ export class ComponentsModule {
         BadgeService,
         DeviceGeoLocService,
         GeoLocService,
+        InviteService,
         LatLonProvider,
         ProfileService,
         TokenService

@@ -119,13 +119,14 @@ export class TokenService {
    * retrieve the Auth0 site -- and thus cannot be tested using BDD tools.
    *
    * This simply stuffs a set of tokens where they are expected.
+   * Much of the data is based on the JWT token which carries profile data.
    */
   public bddRegister() {
     let bddMockToken: BddMockToken = new BddMockToken;
+    /* Sets profile and expiration based on the token. */
     this.setIdToken(bddMockToken.idToken);
     this.setAccessToken(bddMockToken.accessToken);
-    this.setStorageVariable(STORAGE_KEYS.expiresAt, bddMockToken.expiresAt);
-    this.setStorageVariable(STORAGE_KEYS.profile, bddMockToken.profile);
-    this.setStorageVariable(STORAGE_KEYS.registrationType, REGISTRATION_TYPE.SOCIAL);
+    this.setRegistrationType(REGISTRATION_TYPE.SOCIAL);
   }
+
 }
