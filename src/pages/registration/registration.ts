@@ -3,6 +3,7 @@ import {IonicPage, NavController} from 'ionic-angular';
 import {AuthService} from "../../providers/auth/auth.service";
 import {ProfileService, ConfirmationListener, ConfirmationState} from "../../providers/profile/profile.service";
 import {ConfirmPage} from "../confirm/confirm";
+import {Title} from "@angular/platform-browser";
 
 /**
  * Generated class for the RegistrationPage page.
@@ -21,9 +22,14 @@ export class RegistrationPage implements ConfirmationListener {
   constructor(
     public auth: AuthService,
     public profile: ProfileService,
-    public navCtrl: NavController
+    public navCtrl: NavController,
+    public titleService: Title,
   ) {
     profile.listeners.push(this);
+  }
+
+  ionViewDidEnter() {
+    this.titleService.setTitle("Registration");
   }
 
   public canWeSwitch(confirmationState: ConfirmationState) {

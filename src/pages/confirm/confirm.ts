@@ -2,6 +2,7 @@ import {Component} from "@angular/core";
 import {IonicPage, NavController} from "ionic-angular";
 import {ProfileService} from "../../providers/profile/profile.service";
 import {AuthService} from "../../providers/auth/auth.service";
+import {Title} from "@angular/platform-browser";
 
 /**
  * Generated class for the ConfirmPage page.
@@ -22,12 +23,17 @@ export class ConfirmPage {
     public auth: AuthService,
     public profile: ProfileService,
     public navCtrl: NavController,
+    public titleService: Title,
   ) {
     this.localProfile = profile;
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad ConfirmPage');
+  }
+
+  ionViewDidEnter() {
+    this.titleService.setTitle("Confirm Email");
   }
 
   private returnToRegistrationPage(): Promise<any> {
