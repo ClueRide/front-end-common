@@ -1,5 +1,4 @@
 import {Injectable} from "@angular/core";
-import {JwtHelper} from "angular2-jwt";
 import {STORAGE_KEYS} from "../storage-keys";
 import {BddMockToken} from "./bddMockToken";
 import {ProfileService} from "../profile/profile.service";
@@ -11,7 +10,6 @@ import {REGISTRATION_TYPE} from "../auth/registration-type";
  */
 @Injectable()
 export class TokenService {
-  private jwtHelper: JwtHelper;
 
   payload;
   profileService: ProfileService;
@@ -20,7 +18,6 @@ export class TokenService {
   constructor(
     profileService: ProfileService
   ) {
-    this.jwtHelper = new JwtHelper();
     this.profileService = profileService;
     this.payload = JSON.parse(
       window.localStorage.getItem(STORAGE_KEYS.profile)
@@ -33,7 +30,7 @@ export class TokenService {
    * @returns {string}
    */
   public getBearerToken(): string {
-    return JSON.parse(window.localStorage.getItem(STORAGE_KEYS.jwtToken))
+    return JSON.parse(window.localStorage.getItem(STORAGE_KEYS.accessToken))
   }
 
   decodePayload(fullToken: string): any {
@@ -45,7 +42,7 @@ export class TokenService {
       throw new Error('JWT must have 3 parts');
     }
     /* throws exception if problem decoding. */
-    let decoded = this.jwtHelper.urlBase64Decode(parts[1]);
+    let decoded = atob(parts[1]);
     return JSON.parse(decoded);
   }
 

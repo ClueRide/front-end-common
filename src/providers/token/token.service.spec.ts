@@ -80,7 +80,7 @@ describe('Services: TokenService', () => {
       expect(window.localStorage.getItem(STORAGE_KEYS.expiresAt)).not.toBeNull();
     });
 
-});
+  });
 
   describe("setIdToken", () => {
 

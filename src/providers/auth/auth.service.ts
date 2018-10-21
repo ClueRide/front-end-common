@@ -137,6 +137,9 @@ export class AuthService {
       scope: 'openid profile email'
     };
 
+    /**
+     * Executes a PKCE to obtain Access Token for this session.
+     */
     client.authorize(options, (err, authResult) => {
       if(err) {
         throw err;
