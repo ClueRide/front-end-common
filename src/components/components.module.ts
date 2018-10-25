@@ -2,9 +2,9 @@
 import {ModuleWithProviders, NgModule} from '@angular/core';
 import {IonicStorageModule} from "@ionic/storage";
 import {AuthService} from "../providers/auth/auth.service";
-import {BadgeService} from "../providers/resources/badge/badge.service";
-import {BadgeServiceProvider} from "../providers/resources/badge/badge.service.provider";
+import {BadgeService} from "../providers/badge/badge.service";
 import {ConfirmPageModule} from "../pages/confirm/confirm.module";
+import {HttpService} from "../providers/http/http.service";
 import {InviteService} from "../providers/invite/invite.service";
 import {ProfileService} from "../providers/profile/profile.service";
 import {RegistrationPageModule} from "../pages/registration/registration.module";
@@ -24,7 +24,6 @@ import {LatLonProvider} from "../providers/lat-lon/lat-lon";
     RestangularModule.forRoot(RestangularConfigFactory),
   ],
   providers: [
-    BadgeServiceProvider,
     Resource
   ]
 })
@@ -37,6 +36,7 @@ export class ComponentsModule {
         BadgeService,
         DeviceGeoLocService,
         GeoLocService,
+        HttpService,
         InviteService,
         LatLonProvider,
         ProfileService,
