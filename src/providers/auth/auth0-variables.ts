@@ -10,6 +10,7 @@ interface AuthConfig {
 }
 
 export const AUTH_CONFIG: AuthConfig = {
+  /* This is publicly shareable. */
   clientID: {
     social: 'ZztcBTDcglTr10lyuLoq8Zy57EW4HXTZ',
     passwordless: 't6RcrSkjxxFfI0JCMsEifO8QJ72YBcDY'
