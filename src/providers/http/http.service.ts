@@ -8,7 +8,7 @@ import {TokenService} from "../token/token.service";
   See https://angular.io/guide/dependency-injection for more info on providers
   and Angular DI.
 */
-export const BASE_URL: String = 'https://player-test.clueride.com/rest/';
+export const BASE_URL: String = 'https://player.clueride.com/rest/';
 
 @Injectable()
 export class HttpService {

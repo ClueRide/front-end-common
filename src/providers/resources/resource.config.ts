@@ -3,7 +3,7 @@
  * @param RestangularProvider
  */
 export function RestangularConfigFactory(RestangularProvider) {
-  RestangularProvider.setBaseUrl('https://player-test.clueride.com/rest');
+  RestangularProvider.setBaseUrl('https://player.clueride.com/rest');
 
   /* The actual token is issued by registering the device. */
   RestangularProvider.setDefaultHeaders({

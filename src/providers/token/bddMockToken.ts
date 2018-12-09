@@ -3,10 +3,11 @@
  */
 
 export class BddMockToken {
-  /* This string is obtained by logging in using the test account and then picking out
-   * from browser storage the id_token's value */
-  idToken: string = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJnaXZlbl9uYW1lIjoiQmlrZSIsImZhbWlseV9uYW1lIjoiQW5nZWwiLCJuaWNrbmFtZSI6ImJpa2VhbmdlbC5hdGwiLCJuYW1lIjoiQmlrZSBBbmdlbCIsInBpY3R1cmUiOiJodHRwczovL2xoNi5nb29nbGV1c2VyY29udGVudC5jb20vLXNiWEpZY08yRUJZL0FBQUFBQUFBQUFJL0FBQUFBQUFBQUFjLzg2alBpWFZzLVpFL3Bob3RvLmpwZyIsImxvY2FsZSI6ImVuIiwidXBkYXRlZF9hdCI6IjIwMTgtMDItMDNUMjE6NDQ6MTIuNTgyWiIsImVtYWlsIjoiYmlrZWFuZ2VsLmF0bEBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6Ly9jbHVlcmlkZS1zb2NpYWwuYXV0aDAuY29tLyIsInN1YiI6Imdvb2dsZS1vYXV0aDJ8MTE1NjQ2NTYxMzY1MzU0NDk1MzYwIiwiYXVkIjoiWnp0Y0JURGNnbFRyMTBseXVMb3E4Wnk1N0VXNEhYVFoiLCJpYXQiOjE1MTc2OTQyNTMsImV4cCI6MTUxODU1ODI1M30.tkj72woeNR-UhAgjHU_kZENyt2Uojd9w6HR-IDTPJrE";
-  accessToken: string = "don't care";
+  // TODO: FEC-24 expiration review
+  idToken: string = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJnaXZlbl9uYW1lIjoiSmV0dCIsImZhbWlseV9uYW1lIjoiTWFya3MiLCJuaWNrbmFtZSI6ImpldHRtYXJrcyIsIm5hbWUiOiJKZXR0IE1hcmtzIiwicGljdHVyZSI6Imh0dHBzOi8vbGg2Lmdvb2dsZXVzZXJjb250ZW50LmNvbS8tN0pyS3lPY2JCa3MvQUFBQUFBQUFBQUkvQUFBQUFBQUFBQm8vR1BISG9XWXBLN2svcGhvdG8uanBnIiwiZ2VuZGVyIjoibWFsZSIsImxvY2FsZSI6ImVuIiwidXBkYXRlZF9hdCI6IjIwMTgtMDktMjNUMjI6MzM6MDguODYwWiIsImVtYWlsIjoiamV0dG1hcmtzQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJpc3MiOiJodHRwczovL2NsdWVyaWRlLXNvY2lhbC5hdXRoMC5jb20vIiwic3ViIjoiZ29vZ2xlLW9hdXRoMnwxMDk1OTI3MjA0MTYwOTE5MTI1MjUiLCJhdWQiOiJaenRjQlREY2dsVHIxMGx5dUxvcThaeTU3RVc0SFhUWiIsImlhdCI6MTUzNzc0MTk4OSwiZXhwIjoxNTM4NjA1OTg5fQ.jtDuDC8vXXND9qKuT_pcKVRdm4f2TxObkjJkmkZAaRc";
+  /* This string should match the configured value for clueride.test.token. */
+  accessToken: string = "Change this to your secret test token";
+  // TODO: FEC-24 expiration review
   expiresAt: string = JSON.stringify((86400 * 1000) + new Date().getTime());
   profile: any = {
     given_name: "Bike",
