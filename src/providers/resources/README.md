@@ -1,4 +1,10 @@
 # REST API
+DEPRECATED
+
+This is the old way of doing things. Eventually ran into situations that this approach
+was unable to support and switched over to using HttpClient.
+
+
 _The services in this directory were originally modeled after the Angular 1.x ngResource for REST APIs within Angular._
 
 Because Angular 2/4 doesn't supply an ngResource, a 3rd-party library is used:
