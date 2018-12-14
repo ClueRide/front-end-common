@@ -6,6 +6,7 @@ import {AUTH_CONFIG} from "./auth0-variables";
 import {TokenService} from "../token/token.service";
 import {AuthState} from "./auth-state";
 import {REGISTRATION_TYPE} from "./registration-type";
+import {RegStateService} from "../reg-state/reg-state.service";
 
 let auth0Config = {};
 
@@ -34,6 +35,7 @@ export class AuthService {
 
   constructor(
     public tokenService: TokenService,
+    private regStateService: RegStateService,
   ) {
   }
 
@@ -50,6 +52,7 @@ export class AuthService {
    * @returns {Promise<boolean>} true if registration is needed.
    */
   public checkRegistrationRequired(): Promise<boolean> {
+
     return new Promise(
       (resolve, reject) => {
         switch (this.getRegistrationState()) {
@@ -65,10 +68,12 @@ export class AuthService {
             console.log("Token is expired; attempting to renew");
             this.renew().then(
               () => {
+                console.log("Successful Renew?");
                 resolve(false);
               }
             ).catch(
               () => {
+                console.log("Problem with Renew?");
                 resolve(true);
               }
             );
@@ -88,7 +93,27 @@ export class AuthService {
     return Date.now() < expiresAt;
   }
 
+  /**
+   * Talks to the back-end to see if the Access Token is OK or expired.
+   * @returns {AuthState}
+   */
   public getRegistrationState(): AuthState {
+    // TODO: switch to an asynch response instead of synch response.
+    this.regStateService.isRegistered().subscribe(
+      (result) => {
+        if (result) {
+          console.log("Backend thinks we're registered.");
+        } else {
+          console.log("Backend thinks we're not registered.");
+        }
+      },
+      () => {
+        /* Problem. */
+        console.log("Problem talking to the backend.");
+      }
+    );
+
+    // TODO: Original sync response
     let ninetyDays = 86400 * 1000 * 90;
     if (this.isAuthenticated()) {
       return AuthState.REGISTERED;
@@ -97,6 +122,7 @@ export class AuthService {
       return AuthState.EXPIRED;
     }
     return AuthState.UNREGISTERED;
+
   }
 
   /**
@@ -106,7 +132,8 @@ export class AuthService {
    *
    * NOTE: the scheme needs to also be configured in the 'customurlscheme' plugin and
    * on the Auth0 website's list of valid callback URLs.
-   * @param scheme - matches the client's unique package identifier.
+   * @param scheme - matches the client's unique package identifier -- basically, which app is
+   * calling Auth0.
    */
   public setUrlScheme(scheme: string) {
     auth0Config[REGISTRATION_TYPE.SOCIAL].packageIdentifier = scheme;
