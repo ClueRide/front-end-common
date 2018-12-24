@@ -33,6 +33,11 @@ export class TokenService {
     return JSON.parse(window.localStorage.getItem(STORAGE_KEYS.accessToken))
   }
 
+  public hasAccessToken(): boolean {
+    let token = window.localStorage.getItem(STORAGE_KEYS.accessToken);
+    return (token && token.length > 0);
+  }
+
   decodePayload(fullToken: string): any {
     if (!fullToken) {
       throw new Error("passed token is not populated");
@@ -97,6 +102,14 @@ export class TokenService {
 
   public setAccessToken(token) {
     this.setStorageVariable(STORAGE_KEYS.accessToken, token);
+
+    this.profileService.confirm(
+      {
+        authenticated: true,
+        confirmed: false
+      }
+    );
+
   }
 
   public getRegistrationType(): string {
@@ -120,8 +133,7 @@ export class TokenService {
    */
   public bddRegister() {
     let bddMockToken: BddMockToken = new BddMockToken;
-    /* Sets profile and expiration based on the token. */
-    this.setIdToken(bddMockToken.idToken);
+    /* Record the token we'll use for testing. */
     this.setAccessToken(bddMockToken.accessToken);
     this.setRegistrationType(REGISTRATION_TYPE.SOCIAL);
   }
