@@ -1,5 +1,5 @@
-import {HttpClient, HttpHeaders} from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import {HttpHeaders} from "@angular/common/http";
+import {Injectable} from "@angular/core";
 import {TokenService} from "../token/token.service";
 
 /*
@@ -14,7 +14,6 @@ export const BASE_URL: String = 'https://player.clueride.com/rest/';
 export class HttpService {
 
   constructor(
-    public http: HttpClient,
     private tokenService: TokenService,
   ) {
     console.log('Hello HttpService Provider');

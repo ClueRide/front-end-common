@@ -46,76 +46,12 @@ describe('Services: TokenService', () => {
 
   describe("bddRegister", () => {
 
-    it("should place valid ID token into storage", () => {
-      /* make call */
-      toTest.bddRegister();
-
-      /* verify results */
-      expect(window.localStorage.getItem(STORAGE_KEYS.jwtToken)).toContain(bddMockToken.idToken);
-    });
-
     it("should place valid access token into storage", () => {
       /* make call */
       toTest.bddRegister();
 
       /* verify results */
       expect(window.localStorage.getItem(STORAGE_KEYS.accessToken)).toContain(bddMockToken.accessToken);
-    });
-
-    it("should place valid profile object into storage", () => {
-      /* make call */
-      toTest.bddRegister();
-
-      /* verify results */
-      let profile = JSON.parse(window.localStorage.getItem(STORAGE_KEYS.profile));
-      expect(profile.email).toEqual(bddMockToken.profile.email);
-      expect(profile.picture).toEqual(bddMockToken.profile.picture);
-    });
-
-    it("should place valid expiration time into storage", () => {
-      /* make call */
-      toTest.bddRegister();
-
-      /* verify results */
-      expect(window.localStorage.getItem(STORAGE_KEYS.expiresAt)).not.toBeNull();
-    });
-
-  });
-
-  describe("setIdToken", () => {
-
-    it("should place the ID token into storage", () => {
-      /* make call */
-      toTest.setIdToken(bddMockToken.idToken);
-
-      /* verify results */
-      expect(window.localStorage.getItem(STORAGE_KEYS.jwtToken)).toContain(bddMockToken.idToken);
-      expect(toTest.getBearerToken()).toContain(bddMockToken.idToken);
-    });
-
-    it("should decode the Payload", () => {
-      /* make call */
-      toTest.setIdToken(bddMockToken.idToken);
-
-      /* verify results */
-      expect(toTest.payload.email).toBeDefined();
-    });
-
-    it("should place profile data into storage", () => {
-      /* make call */
-      toTest.setIdToken(bddMockToken.idToken);
-
-      /* verify results */
-      expect(window.localStorage.getItem(STORAGE_KEYS.profile)).toContain("Bike Angel");
-    });
-
-    it("should place the expiresAt timestamp into storage", () => {
-      /* make call */
-      toTest.setIdToken(bddMockToken.idToken);
-
-      /* verify results */
-      expect(toTest.getExpiresAtMilliseconds()).toBeGreaterThan(150000000000);
-
     });
 
   });
@@ -139,6 +75,31 @@ describe('Services: TokenService', () => {
 
   });
 
+  describe("hasAccessToken", () => {
+
+    it("should be false when not populated", () => {
+      /* setup data */
+      toTest.clearToken();
+
+      /* make call */
+      /* verify results */
+      expect(toTest.hasAccessToken()).toBeFalsy();
+    });
+
+    it("should should be true when populated", () => {
+      /* setup data */
+      toTest.setAccessToken("Test Token");
+
+      /* train mocks */
+
+      /* make call */
+      /* verify results */
+      expect(toTest.hasAccessToken()).toBeTruthy();
+
+    });
+
+  });
+
   describe("setAccessToken", () => {
       it("should place the access token into storage", () => {
         /* make call */
@@ -146,6 +107,7 @@ describe('Services: TokenService', () => {
 
         /* verify results */
         expect(window.localStorage.getItem(STORAGE_KEYS.accessToken)).toContain(bddMockToken.accessToken);
+        expect(toTest.hasAccessToken()).toBeTruthy();
       });
   });
 

@@ -1,5 +1,5 @@
 import {DeviceGeoLocService} from "./device-geo-loc.service";
-import {Observable} from "rxjs/Observable";
+import {Subject} from "rxjs/Subject";
 
 let toTest: DeviceGeoLocService;
 
@@ -23,11 +23,13 @@ describe("Device Geo-Loc Service", () => {
       /* setup data */
       let expected = {lat: 33.78, lon: -84.38};
       let actual: any;
+      let positionSubject: Subject<any> = new Subject();
 
       /* train mocks */
       spyOn(navigator.geolocation, "getCurrentPosition").and.returnValue(
-        Observable.of(expected)
+        positionSubject.asObservable()
       );
+      positionSubject.next(expected);
 
       /* make call */
       toTest.checkGpsAvailability().subscribe(
@@ -43,11 +45,13 @@ describe("Device Geo-Loc Service", () => {
     it("should indicate GPS available when it is available", () => {
       /* setup data */
       let expected = {lat: 33.78, lon: -84.38};
+      let positionSubject: Subject<any> = new Subject();
 
       /* train mocks */
       spyOn(navigator.geolocation, "getCurrentPosition").and.returnValue(
-        Observable.of(expected)
+        positionSubject.asObservable()
       );
+      positionSubject.next(expected);
 
       /* make call */
       toTest.checkGpsAvailability().subscribe(

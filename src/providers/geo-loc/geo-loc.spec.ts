@@ -209,17 +209,17 @@ describe("Geo-Location", () => {
       spyOn(deviceGeoLocService, "checkGpsAvailability").and.returnValue(
         positionSubject.asObservable()
       );
+      positionSubject.next(expected);
 
       /* make call */
       toTest.notifyWhenReady().subscribe(
         (response) => {
           actual = response;
+          /* verify results */
+          expect(actual).toBe(expected);
         }
       );
-      positionSubject.next(expected);
 
-      /* verify results */
-      expect(actual).toBe(expected);
     });
 
     it("should return default position when GPS not available", () => {

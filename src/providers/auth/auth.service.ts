@@ -1,14 +1,17 @@
-import {Injectable} from "@angular/core";
-
-import {WebAuth} from "auth0-js";
+import {AuthState} from "./auth-state";
 import Auth0Cordova from "@auth0/cordova";
 import {AUTH_CONFIG} from "./auth0-variables";
-import {TokenService} from "../token/token.service";
-import {AuthState} from "./auth-state";
+import {Injectable} from "@angular/core";
+import {Observable} from "rxjs/Observable";
 import {REGISTRATION_TYPE} from "./registration-type";
 import {RegStateService} from "../reg-state/reg-state.service";
+import {Subject} from "rxjs/Subject";
+import {TokenService} from "../token/token.service";
+import {WebAuth} from "auth0-js";
 
 let auth0Config = {};
+
+let isAuthenticted: boolean = false;
 
 auth0Config[REGISTRATION_TYPE.SOCIAL] = {
   // needed for auth0
@@ -40,6 +43,14 @@ export class AuthService {
   }
 
   /**
+   * Provides the state as checked against the backend.
+   * @returns {boolean}
+   */
+  public isAuthenticated() {
+    return isAuthenticted;
+  }
+
+  /**
    * Uses the registration state to tell if the device has been
    * registered for this app and allow the caller to present a
    * different page if registration is required.
@@ -52,77 +63,80 @@ export class AuthService {
    * @returns {Promise<boolean>} true if registration is needed.
    */
   public checkRegistrationRequired(): Promise<boolean> {
-
     return new Promise(
       (resolve, reject) => {
-        switch (this.getRegistrationState()) {
-          case AuthState.REGISTERED:
-            console.log("App is Registered on this device");
-            resolve(false);
-            break;
-          case AuthState.UNREGISTERED:
-            console.log("App is Unregistered on this device");
-            resolve(true);
-            break;
-          case AuthState.EXPIRED:
-            console.log("Token is expired; attempting to renew");
-            this.renew().then(
-              () => {
-                console.log("Successful Renew?");
+        this.getRegistrationState().subscribe(
+          (authState) => {
+            console.log("Reg State: " + authState);
+            switch (authState) {
+              case AuthState.REGISTERED:
+                isAuthenticted = true;
+                console.log("App is Registered on this device");
                 resolve(false);
-              }
-            ).catch(
-              () => {
-                console.log("Problem with Renew?");
+                break;
+              case AuthState.UNREGISTERED:
+                console.log("App is Unregistered on this device");
                 resolve(true);
-              }
-            );
-            break;
-        }
+                break;
+
+              case AuthState.EXPIRED:
+                /* I don't think this case comes out of getRegistrationState() */
+                console.log("Token is expired; attempting to renew");
+                this.renew().then(
+                  () => {
+                    console.log("Successful Renew?");
+                    resolve(false);
+                  }
+                ).catch(
+                  () => {
+                    console.log("Problem with Renew?");
+                    resolve(true);
+                  }
+                );
+                break;
+            }
+          }
+        );
       }
     );
   }
 
   /**
-   * Allows steering front-end logic based on whether this device's JWT token will still be accepted
-   * by the server.
-   * @returns {boolean} True if the associated token is expected to be accepted.
-   */
-  public isAuthenticated() {
-    const expiresAt = this.tokenService.getExpiresAtMilliseconds();
-    return Date.now() < expiresAt;
-  }
-
-  /**
    * Talks to the back-end to see if the Access Token is OK or expired.
+   * Immediate return with UNREGISTERED if we don't have an Access Token.
    * @returns {AuthState}
    */
-  public getRegistrationState(): AuthState {
-    // TODO: switch to an asynch response instead of synch response.
+  public getRegistrationState(): Observable<AuthState> {
+    let authStateSubject: Subject<AuthState> = new Subject<AuthState>();
+
+    /* Absence of this token means we have never registered. */
+    if (!this.tokenService.hasAccessToken()) {
+      setTimeout(
+        () => {
+          authStateSubject.next(AuthState.UNREGISTERED);
+        }, 1
+      );
+      return authStateSubject.asObservable();
+    }
+
     this.regStateService.isRegistered().subscribe(
       (result) => {
         if (result) {
           console.log("Backend thinks we're registered.");
+          authStateSubject.next(AuthState.REGISTERED);
         } else {
           console.log("Backend thinks we're not registered.");
+          authStateSubject.next(AuthState.UNREGISTERED);
         }
       },
       () => {
         /* Problem. */
         console.log("Problem talking to the backend.");
+        authStateSubject.next(AuthState.UNREGISTERED);
       }
     );
 
-    // TODO: Original sync response
-    let ninetyDays = 86400 * 1000 * 90;
-    if (this.isAuthenticated()) {
-      return AuthState.REGISTERED;
-    }
-    if (this.tokenService.getExpiresAtMilliseconds() + ninetyDays > Date.now()) {
-      return AuthState.EXPIRED;
-    }
-    return AuthState.UNREGISTERED;
-
+    return authStateSubject.asObservable();
   }
 
   /**
@@ -181,6 +195,7 @@ export class AuthService {
   /**
    * Attempt to obtain a new set of tokens for the expired token
    * this device currently holds.
+   * TODO: Use the stored renewal token; this isn't a real renew yet.
    */
   public renew() {
     let registrationType: string = this.tokenService.getRegistrationType();
@@ -229,7 +244,7 @@ export class AuthService {
   }
 
   public logout() {
-    this.logoutAuth0();
+    // this.logoutAuth0();
     /* Clear local storage for tokens. */
     this.tokenService.clearToken();
   }

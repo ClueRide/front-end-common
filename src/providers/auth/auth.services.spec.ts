@@ -1,13 +1,15 @@
 import {AuthService} from "./auth.service";
-import {TestBed} from "@angular/core/testing";
+import {inject, TestBed} from "@angular/core/testing";
 import {ComponentsModule} from "../../components/components.module";
 import {TokenService} from "../token/token.service";
 import {Platform} from "ionic-angular";
 import {ProfileService} from "../profile/profile.service";
 import {AuthState} from "./auth-state";
-import {STORAGE_KEYS} from "../storage-keys";
 import {SecureStorage} from "@ionic-native/secure-storage";
 import {SecureStorageMock} from "@ionic-native-mocks/secure-storage";
+import {RegStateService} from "../reg-state/reg-state.service";
+import {HttpService} from "../http/http.service";
+import {HttpClientTestingModule, HttpTestingController} from "@angular/common/http/testing";
 /**
  * Created by jett on 2/5/18.
  */
@@ -17,29 +19,25 @@ let tokenService: TokenService;
 
 describe("Services: AuthService", () => {
 
-  function setExpiredState() {
-    tokenService.bddRegister();
-    let eightyNineDays = 86400 * 1000 * 89;
-    let oldExpiration = Date.now() - eightyNineDays;
-    window.localStorage.setItem(STORAGE_KEYS.expiresAt, JSON.stringify(oldExpiration));
-  }
-
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
         AuthService,
         ComponentsModule,
+        HttpService,
         ProfileService,
         {
           provide: SecureStorage,
           useClass: SecureStorageMock,
           deps: [SecureStorageMock]
         },
+        RegStateService,
         SecureStorageMock,
         TokenService,
         Platform
       ],
       imports: [
+        HttpClientTestingModule
       ]
     }).compileComponents();
 
@@ -54,87 +52,116 @@ describe("Services: AuthService", () => {
 
   describe("checkRegistrationRequired", () => {
 
-    it("should resolve true when unregistered", (done) => {
-      /* make call */
-      let actualPromise = toTest.checkRegistrationRequired();
+    it("should resolve true when unregistered",
+      inject(
+        [HttpTestingController],
+        (httpMock: HttpTestingController) => {
 
-      /* verify results */
-      actualPromise.then(
-        (actual) => {
-          expect(actual).toBeTruthy();
-          done();
+          /* make call */
+          let actualPromise = toTest.checkRegistrationRequired();
+
+          /* verify results */
+          actualPromise.then(
+            (actual) => {
+              expect(actual).toBeTruthy();
+            }
+          );
         }
-      );
+      )
+    );
 
-    });
+    it("should resolve false when registered",
+      inject(
+        [HttpTestingController],
+        (httpMock: HttpTestingController) => {
 
-    it("should resolve false when registered", (done) => {
-      /* setup data */
-      tokenService.bddRegister();
+          /* setup data */
+          tokenService.bddRegister();
 
-      /* make call */
-      let actualPromise = toTest.checkRegistrationRequired();
+          /* make call */
+          let actualPromise = toTest.checkRegistrationRequired();
 
-      /* verify results */
-       actualPromise.then(
-        (actual) => {
-          expect(actual).toBeFalsy();
-          done();
+          /* Set HTTP expectations. */
+          const requestExpectation = httpMock.expectOne("https://player.clueride.com/rest/access/state");
+          expect(requestExpectation.request.method).toEqual('GET');
+
+          /* Mock the HTTP response. */
+          requestExpectation.flush(
+            "true",
+            {
+              status: 200,
+              statusText: 'OK'
+            }
+          );
+
+          /* verify results */
+          actualPromise.then(
+            (actual) => {
+              expect(actual).toBeFalsy();
+              // done();
+            }
+          );
+
         }
-      );
-    });
-
-    it("should resolve false when expired and renewal succeeds", (done) => {
-      /* setup data */
-      setExpiredState();
-
-      /* make call */
-      let actualPromise = toTest.checkRegistrationRequired();
-
-      /* verify results */
-      actualPromise.then(
-        (actual) => {
-          /* This is tough to mock out until I inject the Cordova client */
-          // expect(actual).toBeFalsy();
-          done();
-        }
-      );
-
-    });
+      )
+    );
 
   });
 
   describe("getRegistrationState", () => {
 
-    it("should return UNREGISTERED when tokens are empty", () => {
-      /* make call */
-      let actual = toTest.getRegistrationState();
+    it("should return UNREGISTERED when tokens are empty",
+      inject(
+        [HttpTestingController],
+        (httpMock: HttpTestingController) => {
+          /* setup data */
+          let actual = {};
 
-      /* verify results */
-      expect(actual).toEqual(AuthState.UNREGISTERED);
-    });
+          /* make call */
+          toTest.getRegistrationState().subscribe(
+            (result) => {
+              actual = result;
+              /* verify results */
+              expect(actual).toEqual(AuthState.UNREGISTERED);
+            }
+          );
+        }
+      )
+    );
 
-    it("should return REGISTERED when tokens are valid and current", () => {
-      /* setup data */
-      tokenService.bddRegister();
+    it("should return REGISTERED when tokens are valid and current",
+      inject(
+        [HttpTestingController],
+        (httpMock: HttpTestingController) => {
+          /* setup data */
+          tokenService.bddRegister();
+          let actual = {};
 
-      /* make call */
-      let actual = toTest.getRegistrationState();
+          /* make call */
+          toTest.getRegistrationState().subscribe(
+            (result) => {
+              actual = result;
+            }
+          );
 
-      /* verify results */
-      expect(actual).toEqual(AuthState.REGISTERED);
-    });
+          /* Set HTTP expectations. */
+          const requestExpectation = httpMock.expectOne("https://player.clueride.com/rest/access/state");
+          expect(requestExpectation.request.method).toEqual('GET');
 
-    it("should return EXPIRED when tokens are expired but are no more than 90 days old", () => {
-      /* setup data */
-      setExpiredState();
+          /* Mock the HTTP response. */
+          requestExpectation.flush(
+            "true",
+            {
+              status: 200,
+              statusText: 'OK'
+            }
+          );
 
-      /* make call */
-      let actual = toTest.getRegistrationState();
-
-      /* verify results */
-      expect(actual).toEqual(AuthState.EXPIRED);
-    });
+          /* verify results */
+          expect(actual).toEqual(AuthState.REGISTERED);
+        }
+      )
+    );
 
   });
 
