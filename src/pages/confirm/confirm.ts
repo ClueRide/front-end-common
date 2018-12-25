@@ -42,14 +42,10 @@ export class ConfirmPage {
 
   public useThisEmail() {
     console.log("Use this Email");
-    this.returnToRegistrationPage().then(
-      () => {
-        this.profile.confirm(
-          {
-            authenticated: true,
-            confirmed: true
-          }
-        );
+    this.profile.confirm(
+      {
+        authenticated: true,
+        confirmed: true
       }
     );
   }

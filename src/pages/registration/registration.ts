@@ -25,6 +25,7 @@ export class RegistrationPage implements ConfirmationListener {
     public navCtrl: NavController,
     public titleService: Title,
   ) {
+    /** Add ourselves to the list of profile listeners. */
     profile.listeners.push(this);
   }
 
@@ -35,12 +36,6 @@ export class RegistrationPage implements ConfirmationListener {
   public canWeSwitch(confirmationState: ConfirmationState) {
     if (confirmationState.authenticated && !confirmationState.confirmed) {
       this.navCtrl.push(ConfirmPage)
-        .then()
-        .catch();
-    }
-
-    if (confirmationState.authenticated && confirmationState.confirmed) {
-      this.navCtrl.pop()
         .then()
         .catch();
     }
