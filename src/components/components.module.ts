@@ -16,6 +16,7 @@ import {Resource} from "../providers/resources/resource";
 import {RestangularModule} from "ngx-restangular";
 import {RestangularConfigFactory} from "../providers/resources/resource.config";
 import {TokenService} from "../providers/token/token.service";
+import {UserService} from "../providers/user/user.service";
 
 @NgModule({
   imports: [
@@ -42,7 +43,8 @@ export class ComponentsModule {
         LatLonProvider,
         ProfileService,
         RegStateService,
-        TokenService
+        TokenService,
+        UserService,
       ]
     }
   }

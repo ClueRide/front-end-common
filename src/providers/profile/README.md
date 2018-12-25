@@ -1,14 +1,12 @@
 # Responsibilities
-Presents the profile of a User when it is available via Authentication.
+Presents the profile of a User when it is available post Authentication.
 - Email address which is used as the Principal.
-- Image of user when available.
-
-At this time, the Profile also tracks the state of whether the
-email address has been authenticated by AuthService and also 
-confirmed by the user agreeing to use the authenticated email.
+- Image of user when available ().
+- Observable/Subject for confirmation that user wants to use the 
+email address currently recorded for the access token.
 
 # Collaborations
 Profile Service works with:
-- Token Service to retrieve the decoded payload data.
+- Back-end REST API to retrieve current session's principal.
 - Clients requesting Email Address or the URL of the user's image.
-- Confirmation Page informs the profile of confirmation status.
+- Confirmation Page informs the profile of confirmation status and notifies listeners of this event.

@@ -7,6 +7,7 @@ import {REGISTRATION_TYPE} from "./registration-type";
 import {RegStateService} from "../reg-state/reg-state.service";
 import {Subject} from "rxjs/Subject";
 import {TokenService} from "../token/token.service";
+import {UserService} from "../user/user.service";
 import {WebAuth} from "auth0-js";
 
 let auth0Config = {};
@@ -39,6 +40,7 @@ export class AuthService {
   constructor(
     public tokenService: TokenService,
     private regStateService: RegStateService,
+    private userService: UserService,
   ) {
   }
 
@@ -189,6 +191,7 @@ export class AuthService {
       this.tokenService.setIdToken(authResult.idToken);
       this.tokenService.setAccessToken(authResult.accessToken);
       this.tokenService.setRegistrationType(registrationType);
+      this.userService.initializeProfile();
     });
   }
 
@@ -215,6 +218,7 @@ export class AuthService {
             } else {
               this.tokenService.setIdToken(authResult.idToken);
               this.tokenService.setAccessToken(authResult.accessToken);
+              this.userService.initializeProfile();
               resolve(false);
             }
           }
@@ -225,6 +229,11 @@ export class AuthService {
   }
 
   private logoutAuth0() {
+    /** Messes up testing when we're running local. */
+    if (this.runningLocal()) {
+      return;
+    }
+
     let registrationType: string = this.tokenService.getRegistrationType();
     /* no need to call auth0 if we don't know what type. */
     if (registrationType) {
@@ -244,7 +253,7 @@ export class AuthService {
   }
 
   public logout() {
-    // this.logoutAuth0();
+    this.logoutAuth0();
     /* Clear local storage for tokens. */
     this.tokenService.clearToken();
   }
@@ -258,6 +267,7 @@ export class AuthService {
    */
   public bddLogin() {
     this.tokenService.bddRegister();
+    this.userService.initializeProfile();
   }
 
   /**

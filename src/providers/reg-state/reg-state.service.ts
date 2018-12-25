@@ -1,7 +1,7 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import {Observable} from "rxjs/Observable";
 import {BASE_URL, HttpService} from "../http/http.service";
+import {HttpClient} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {Observable} from "rxjs/Observable";
 
 /*
   Generated class for the RegStateProvider provider.
