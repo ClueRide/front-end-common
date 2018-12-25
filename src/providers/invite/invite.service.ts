@@ -7,6 +7,7 @@ import {Invite} from "./invite";
 import {HttpClient} from "@angular/common/http";
 import {BASE_URL, HttpService} from "../http/http.service";
 import {Observable} from "rxjs/Observable";
+import {SessionInviteState} from "./sessionInviteState";
 
 
 @Injectable()
@@ -16,6 +17,14 @@ export class InviteService {
     private http: HttpClient,
     private httpService: HttpService,
   ) {
+  }
+
+  /** Returns a string representing the state of invites for the current session. */
+  public inviteState(): Observable<keyof typeof SessionInviteState> {
+    return this.http.get<keyof typeof SessionInviteState>(
+      BASE_URL + 'invite/current-state',
+      {headers: this.httpService.getAuthHeaders()}
+    );
   }
 
   /** Retrieves an ordered list of Invites for the current session. */

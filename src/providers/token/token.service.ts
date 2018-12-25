@@ -12,13 +12,11 @@ import {REGISTRATION_TYPE} from "../auth/registration-type";
 export class TokenService {
 
   payload;
-  profileService: ProfileService;
   token: string;
 
   constructor(
-    profileService: ProfileService
+    public profileService: ProfileService,
   ) {
-    this.profileService = profileService;
     this.payload = JSON.parse(
       window.localStorage.getItem(STORAGE_KEYS.profile)
     );
@@ -94,8 +92,6 @@ export class TokenService {
         confirmed: false
       }
     );
-
-    this.profileService.setProfile(this.payload);
 
     this.setStorageVariable(STORAGE_KEYS.jwtToken, token);
   }
