@@ -4,8 +4,7 @@
 import {Injectable} from "@angular/core";
 
 /**
- * Knows about the profile portion of the JWT token obtained
- * from the Token Service.
+ * Knows about the email address and image URL from (back-end) principal service.
  */
 @Injectable()
 export class ProfileService {
@@ -19,7 +18,7 @@ export class ProfileService {
 
   public getPrincipal(): string {
     if (this.profile) {
-      return this.profile.email;
+      return this.profile.emailAddress.address;
     }
     return "";
   }
