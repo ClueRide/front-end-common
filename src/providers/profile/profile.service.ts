@@ -18,7 +18,12 @@ export class ProfileService {
 
   public getPrincipal(): string {
     if (this.profile) {
-      return this.profile.emailAddress.address;
+      /* Depends on the source? */
+      if (this.profile.emailAddress) {
+        return this.profile.emailAddress.address;
+      } else {
+        return this.profile.email;
+      }
     }
     return "";
   }
