@@ -69,7 +69,6 @@ export class AuthService {
       (resolve, reject) => {
         this.getRegistrationState().subscribe(
           (authState) => {
-            console.log("Reg State: " + authState);
             switch (authState) {
               case AuthState.REGISTERED:
                 isAuthenticted = true;
