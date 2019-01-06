@@ -37,16 +37,18 @@ export class InviteService {
 
   /** For the provided invite, tells the server the client is accepting the invite. */
   accept(inviteId: number): Observable<Invite> {
-    return this.http.get<Invite>(
+    return this.http.post<Invite>(
       BASE_URL + 'invite/accept/' + inviteId,
+      {},
       {headers: this.httpService.getAuthHeaders()}
     );
   }
 
   /** For the provided invite, tells the server the client is declining the invite. */
   decline(inviteId: number): Observable<Invite> {
-    return this.http.get<Invite>(
+    return this.http.post<Invite>(
       BASE_URL + 'invite/decline/' + inviteId,
+      {},
       {headers: this.httpService.getAuthHeaders()}
     );
   }
