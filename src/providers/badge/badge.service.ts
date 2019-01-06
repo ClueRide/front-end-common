@@ -4,12 +4,7 @@ import {BASE_URL, HttpService} from "../http/http.service";
 import {Badge} from "./badge";
 import {Observable} from "rxjs/Observable";
 
-/*
-  Generated class for the BadgeProvider provider.
-
-  See https://angular.io/guide/dependency-injection for more info on providers
-  and Angular DI.
-*/
+/** Provides access to Badges by session. */
 @Injectable()
 export class BadgeService {
 

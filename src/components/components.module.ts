@@ -9,6 +9,7 @@ import {GeoLocService} from "../providers/geo-loc/geo-loc";
 import {HttpService} from "../providers/http/http.service";
 import {InviteService} from "../providers/invite/invite.service";
 import {LatLonProvider} from "../providers/lat-lon/lat-lon";
+import {OutingService} from "../providers/outing/outing.service";
 import {ProfileService} from "../providers/profile/profile.service";
 import {RegistrationPageModule} from "../pages/registration/registration.module";
 import {RegStateService} from "../providers/reg-state/reg-state.service";
@@ -29,6 +30,7 @@ import {UserService} from "../providers/user/user.service";
     Resource
   ]
 })
+
 export class ComponentsModule {
   static forRoot(): ModuleWithProviders {
     return {
@@ -41,6 +43,7 @@ export class ComponentsModule {
         HttpService,
         InviteService,
         LatLonProvider,
+        OutingService,
         ProfileService,
         RegStateService,
         TokenService,
