@@ -10,16 +10,41 @@ import {OutingView} from "./outing-view";
 @Injectable()
 export class OutingService {
 
-  /* TODO: FEC-8 Outing "Resource"
-   * Example: https://fullstack-developer.academy/caching-http-requests-with-angular/
-   * Consider that an outing only changes as the invitation is accepted and can be held within
-   * the Outing Service.
-   */
+  /* Defined once we have received valid data and we haven't been asked to refresh. */
+  cachedOuting: OutingView;
+  /* Defined only during the async window after request and before response. */
+  observable: Observable<any>;
+
   constructor(
     public http: HttpClient,
     private httpService: HttpService,
   ) {
-    console.log('Hello OutingProvider Provider');
+  }
+
+  public getSessionOuting(): Observable<OutingView> {
+    if (this.cachedOuting) {
+      return Observable.of(this.cachedOuting);
+    } else if (this.observable) {
+      return this.observable;
+    } else {
+      this.observable = this.http.get(
+        BASE_URL + 'outing/active',
+        {
+          headers: this.httpService.getAuthHeaders(),
+          observe: 'response'
+        }
+      ).map(response => {
+        /* Reset this to indicate response is received. */
+        this.observable = null;
+        if (response.status === 200) {
+          this.cachedOuting = <OutingView> response.body;
+          return this.cachedOuting;
+        } else {
+          return 'Request failed with status ' + response.status;
+        }
+      }).share();
+      return this.observable;
+    }
   }
 
   public get(id: number): Observable<OutingView> {
