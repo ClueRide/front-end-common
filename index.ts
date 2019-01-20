@@ -7,6 +7,7 @@ export { AuthState } from  "./src/providers/auth/auth-state";
 export { Badge } from "./src/providers/badge/badge";
 export { BadgeService } from "./src/providers/badge/badge.service";
 export { ComponentsModule } from "./src/components/components.module";
+export { EdgeService } from "./src/providers/edge/edge.service";
 export { GeoLocService } from "./src/providers/geo-loc/geo-loc";
 export { Invite } from "./src/providers/invite/invite";
 export { InviteState } from "./src/providers/invite/inviteState";
