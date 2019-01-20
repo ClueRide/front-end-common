@@ -11,6 +11,7 @@ import {HttpService} from "../providers/http/http.service";
 import {InviteService} from "../providers/invite/invite.service";
 import {LatLonProvider} from "../providers/lat-lon/lat-lon";
 import {OutingService} from "../providers/outing/outing.service";
+import {PathService} from "../providers/path/path.service";
 import {ProfileService} from "../providers/profile/profile.service";
 import {RegistrationPageModule} from "../pages/registration/registration.module";
 import {RegStateService} from "../providers/reg-state/reg-state.service";
@@ -46,6 +47,7 @@ export class ComponentsModule {
         InviteService,
         LatLonProvider,
         OutingService,
+        PathService,
         ProfileService,
         RegStateService,
         TokenService,
