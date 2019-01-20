@@ -5,6 +5,7 @@ import {AuthService} from "../providers/auth/auth.service";
 import {BadgeService} from "../providers/badge/badge.service";
 import {ConfirmPageModule} from "../pages/confirm/confirm.module";
 import {DeviceGeoLocService} from "../providers/device-geo-loc/device-geo-loc.service";
+import {EdgeService} from "../providers/edge/edge.service";
 import {GeoLocService} from "../providers/geo-loc/geo-loc";
 import {HttpService} from "../providers/http/http.service";
 import {InviteService} from "../providers/invite/invite.service";
@@ -39,6 +40,7 @@ export class ComponentsModule {
         AuthService,
         BadgeService,
         DeviceGeoLocService,
+        EdgeService,
         GeoLocService,
         HttpService,
         InviteService,
