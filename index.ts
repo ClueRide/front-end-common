@@ -16,6 +16,7 @@ export { LatLon } from "./src/providers/lat-lon/lat-lon";
 export { ObservableGeoposition } from "./src/components/ObservableGeoposition";
 export { OutingView } from "./src/providers/outing/outing-view";
 export { OutingService } from "./src/providers/outing/outing.service";
+export { PathService } from "./src/providers/path/path.service";
 export { ProfileService } from "./src/providers/profile/profile.service";
 export { RegStateService } from "./src/providers/reg-state/reg-state.service";
 export { Resource } from "./src/providers/resources/resource";
