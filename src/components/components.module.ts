@@ -4,20 +4,24 @@ import {IonicStorageModule} from "@ionic/storage";
 import {AuthService} from "../providers/auth/auth.service";
 import {BadgeService} from "../providers/badge/badge.service";
 import {ConfirmPageModule} from "../pages/confirm/confirm.module";
+import {CourseService} from "../providers/course/course-service";
 import {DeviceGeoLocService} from "../providers/device-geo-loc/device-geo-loc.service";
 import {EdgeService} from "../providers/edge/edge.service";
 import {GeoLocService} from "../providers/geo-loc/geo-loc";
 import {HttpService} from "../providers/http/http.service";
 import {InviteService} from "../providers/invite/invite.service";
 import {LatLonProvider} from "../providers/lat-lon/lat-lon";
+import {LocationService} from "../providers/location/location-service";
 import {OutingService} from "../providers/outing/outing.service";
 import {PathService} from "../providers/path/path.service";
 import {ProfileService} from "../providers/profile/profile.service";
+import {PuzzleService} from "../providers/puzzle/puzzle-service";
 import {RegistrationPageModule} from "../pages/registration/registration.module";
 import {RegStateService} from "../providers/reg-state/reg-state.service";
 import {Resource} from "../providers/resources/resource";
 import {RestangularModule} from "ngx-restangular";
 import {RestangularConfigFactory} from "../providers/resources/resource.config";
+import {TeamService} from "../providers/team/team-service";
 import {TokenService} from "../providers/token/token.service";
 import {UserService} from "../providers/user/user.service";
 
@@ -40,16 +44,20 @@ export class ComponentsModule {
       providers: [
         AuthService,
         BadgeService,
+        CourseService,
         DeviceGeoLocService,
         EdgeService,
         GeoLocService,
         HttpService,
         InviteService,
         LatLonProvider,
+        LocationService,
         OutingService,
         PathService,
         ProfileService,
+        PuzzleService,
         RegStateService,
+        TeamService,
         TokenService,
         UserService,
       ]

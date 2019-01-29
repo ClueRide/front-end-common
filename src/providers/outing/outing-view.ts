@@ -5,11 +5,13 @@ import {LatLon} from "../lat-lon/lat-lon";
 export class OutingView {
   id: number;
   scheduledTime: Date;
+  startingLocationId: number;
   startPin: LatLon;
   courseName: string;
   courseDescription: string;
   courseUrl: string;
   guideName: string;
   guideMemberId: number;
+  teamId: number;
   teamName: string;
 }
