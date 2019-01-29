@@ -15,6 +15,7 @@ import {LocationService} from "../providers/location/location-service";
 import {OutingService} from "../providers/outing/outing.service";
 import {PathService} from "../providers/path/path.service";
 import {ProfileService} from "../providers/profile/profile.service";
+import {ProfileConfirmationService} from "../providers/profile-confirmation-service/profile-confirmation-service";
 import {PuzzleService} from "../providers/puzzle/puzzle-service";
 import {RegistrationPageModule} from "../pages/registration/registration.module";
 import {RegStateService} from "../providers/reg-state/reg-state.service";
@@ -55,6 +56,7 @@ export class ComponentsModule {
         OutingService,
         PathService,
         ProfileService,
+        ProfileConfirmationService,
         PuzzleService,
         RegStateService,
         TeamService,

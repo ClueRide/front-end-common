@@ -62,4 +62,12 @@ export class OutingService {
     }
   }
 
+  getGuideMemberId() {
+    if (this.cachedOuting) {
+      return this.cachedOuting.guideMemberId;
+    } else {
+      return undefined;
+    }
+  }
+
 }

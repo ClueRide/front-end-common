@@ -1,8 +1,12 @@
-import { Component } from '@angular/core';
-import {IonicPage, NavController} from 'ionic-angular';
 import {AuthService} from "../../providers/auth/auth.service";
-import {ProfileService, ConfirmationListener, ConfirmationState} from "../../providers/profile/profile.service";
+import {Component} from '@angular/core';
+import {
+  ConfirmationListener,
+  ConfirmationState
+} from "../../providers/profile-confirmation-service/profile-confirmation-service";
 import {ConfirmPage} from "../confirm/confirm";
+import {IonicPage, NavController} from 'ionic-angular';
+import {ProfileConfirmationService} from "../../providers/profile-confirmation-service/profile-confirmation-service";
 import {Title} from "@angular/platform-browser";
 
 /**
@@ -21,7 +25,7 @@ export class RegistrationPage implements ConfirmationListener {
 
   constructor(
     public auth: AuthService,
-    public profile: ProfileService,
+    public profile: ProfileConfirmationService,
     public navCtrl: NavController,
     public titleService: Title,
   ) {

@@ -1,7 +1,7 @@
 import {Injectable} from "@angular/core";
 import {STORAGE_KEYS} from "../storage-keys";
 import {BddMockToken} from "./bddMockToken";
-import {ProfileService} from "../profile/profile.service";
+import {ProfileConfirmationService} from "../profile-confirmation-service/profile-confirmation-service";
 import {REGISTRATION_TYPE} from "../auth/registration-type";
 
 /**
@@ -15,12 +15,11 @@ export class TokenService {
   token: string;
 
   constructor(
-    public profileService: ProfileService,
+    private profileConfirmationService: ProfileConfirmationService
   ) {
     this.payload = JSON.parse(
       window.localStorage.getItem(STORAGE_KEYS.profile)
     );
-    profileService.setProfile(this.payload);
   }
 
   /**
@@ -86,7 +85,7 @@ export class TokenService {
 
     this.setExpiresAtFromPayload(this.payload.exp);
 
-    this.profileService.confirm(
+    this.profileConfirmationService.confirm(
       {
         authenticated: true,
         confirmed: false
@@ -99,7 +98,7 @@ export class TokenService {
   public setAccessToken(token) {
     this.setStorageVariable(STORAGE_KEYS.accessToken, token);
 
-    this.profileService.confirm(
+    this.profileConfirmationService.confirm(
       {
         authenticated: true,
         confirmed: false

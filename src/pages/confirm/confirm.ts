@@ -1,8 +1,8 @@
 import {Component} from "@angular/core";
 import {IonicPage, NavController} from "ionic-angular";
-import {ProfileService} from "../../providers/profile/profile.service";
 import {AuthService} from "../../providers/auth/auth.service";
 import {Title} from "@angular/platform-browser";
+import {ProfileConfirmationService} from "../../providers/profile-confirmation-service/profile-confirmation-service";
 
 /**
  * Generated class for the ConfirmPage page.
@@ -17,15 +17,13 @@ import {Title} from "@angular/platform-browser";
   templateUrl: 'confirm.html',
 })
 export class ConfirmPage {
-  localProfile: ProfileService;
 
   constructor(
     public auth: AuthService,
-    public profile: ProfileService,
+    public profileConfirmationService: ProfileConfirmationService,
     public navCtrl: NavController,
     public titleService: Title,
   ) {
-    this.localProfile = profile;
   }
 
   ionViewDidLoad() {
@@ -42,7 +40,7 @@ export class ConfirmPage {
 
   public useThisEmail() {
     console.log("Use this Email");
-    this.profile.confirm(
+    this.profileConfirmationService.confirm(
       {
         authenticated: true,
         confirmed: true
