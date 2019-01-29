@@ -21,7 +21,7 @@ export { ObservableGeoposition } from "./src/components/ObservableGeoposition";
 export { OutingView } from "./src/providers/outing/outing-view";
 export { OutingService } from "./src/providers/outing/outing.service";
 export { PathService } from "./src/providers/path/path.service";
-export { ProfileService } from "./src/providers/profile/profile.service";
+export { ProfileService, ConfirmationListener, ConfirmationState } from "./src/providers/profile/profile.service";
 export { Puzzle } from "./src/providers/puzzle/puzzle";
 export { PuzzleService } from "./src/providers/puzzle/puzzle-service";
 export { RegStateService } from "./src/providers/reg-state/reg-state.service";
