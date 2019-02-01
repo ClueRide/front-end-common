@@ -5,6 +5,10 @@ import {BASE_URL, HttpService} from "../http/http.service";
 import {Observable, Subject} from "rxjs";
 import {OutingService} from "../outing/outing.service";
 
+interface LocationMap {
+  [index: number]: Location;
+}
+
 /** Caching service for the Locations associated with the session's Course.
  * This data is static for the duration of the session.
  *
@@ -21,10 +25,10 @@ import {OutingService} from "../outing/outing.service";
  */
 @Injectable()
 export class LocationService {
-
   private cachedLocations: Location[] = [];
-  private currentLocationId: number = -1;
 
+  private locationMap: LocationMap = {};
+  private currentLocationId: number = -1;
   constructor(
     public http: HttpClient,
     private httpService: HttpService,
@@ -51,10 +55,19 @@ export class LocationService {
     ).subscribe(
       (response) => {
         this.cachedLocations = <Location[]> response;
+        this.loadLocationMap();
         locationSubject.next(true);
       }
     );
     return locationSubject.asObservable();
+  }
+
+  loadLocationMap(): any {
+    for (let index in this.cachedLocations) {
+      let location = this.cachedLocations[index];
+      let id = location.id;
+      this.locationMap[id] = location;
+    }
   }
 
   /**
@@ -81,6 +94,10 @@ export class LocationService {
    */
   getCurrentLocationId(): number {
     return this.currentLocationId;
+  }
+
+  getLocation(id: any) {
+    return this.locationMap[id];
   }
 
 }
