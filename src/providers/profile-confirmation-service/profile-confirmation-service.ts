@@ -9,7 +9,9 @@ export class ProfileConfirmationService {
   confirmed: boolean = false;
   public listeners: ConfirmationListener[] = [];
 
-  constructor(public http: HttpClient) {
+  constructor(
+    public http: HttpClient
+  ) {
     console.log('Hello ProfileConfirmationServiceProvider Provider');
   }
 
