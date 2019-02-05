@@ -17,11 +17,11 @@ export class HttpService {
   }
 
   public getAuthHeaders(): HttpHeaders {
-    let commonHeaders = new HttpHeaders();
-    commonHeaders = commonHeaders.append(
-      'Authorization',
-      'Bearer ' + this.tokenService.getBearerToken()
-    );
+    let commonHeaders:HttpHeaders = new HttpHeaders()
+      .append(
+        'Authorization',
+        'Bearer ' + this.tokenService.getBearerToken()
+      );
     return commonHeaders;
   }
 
