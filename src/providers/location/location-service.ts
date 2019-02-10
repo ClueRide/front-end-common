@@ -4,6 +4,7 @@ import {Location} from './location';
 import {BASE_URL, HttpService} from "../http/http.service";
 import {Observable, Subject} from "rxjs";
 import {OutingService} from "../outing/outing.service";
+import {LatLon} from "../lat-lon/lat-lon";
 
 interface LocationMap {
   [index: number]: Location;
@@ -60,6 +61,14 @@ export class LocationService {
       }
     );
     return locationSubject.asObservable();
+  }
+
+  proposeLocation(latLon: LatLon): Observable<Location> {
+    return this.http.post<Location>(
+      BASE_URL + 'location/propose?lat=' + latLon.lat + '&lon=' + latLon.lon,
+      {},
+      {headers: this.httpService.getAuthHeaders()}
+    );
   }
 
   loadLocationMap(): any {
