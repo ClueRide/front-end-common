@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {BASE_URL, HttpService} from "../http/http.service";
+import {Location} from "../location/location";
 import {LocationService} from "../location/location-service";
 import {Puzzle} from "./puzzle";
 import {Observable, Subject} from "rxjs";
@@ -59,6 +60,26 @@ export class PuzzleService {
 
   public getPuzzlesPerLocationId(locationId: number): Puzzle[] {
     return this.cachedPuzzles[locationId];
+  }
+
+  /** Provides an empty puzzle created by the Server. */
+  public getBlankPuzzleForLocation(location: Location): Observable<Puzzle> {
+    return this.http.post<Puzzle>(
+      BASE_URL + "puzzle/blank",
+      location,
+      {headers: this.httpService.getAuthHeaders()}
+    );
+  }
+
+  /** After making changes, post the updates to the puzzle. */
+  public savePuzzle(
+    puzzle: Puzzle
+  ): Observable<Puzzle> {
+    return this.http.post<Puzzle>(
+      BASE_URL + "puzzle",
+      puzzle,
+      {headers: this.httpService.getAuthHeaders()}
+    );
   }
 
 }
