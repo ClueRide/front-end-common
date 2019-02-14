@@ -16,7 +16,7 @@ export { Invite } from "./src/providers/invite/invite";
 export { InviteState } from "./src/providers/invite/inviteState";
 export { InviteService } from "./src/providers/invite/invite.service";
 export { LatLon } from "./src/providers/lat-lon/lat-lon";
-export { Location } from "./src/providers/location/location";
+export { Location, Image } from "./src/providers/location/location";
 export { LocationService } from "./src/providers/location/location-service";
 export { ObservableGeoposition } from "./src/components/ObservableGeoposition";
 export { OutingView } from "./src/providers/outing/outing-view";
