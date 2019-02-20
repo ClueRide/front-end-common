@@ -22,6 +22,7 @@ export { ObservableGeoposition } from "./src/components/ObservableGeoposition";
 export { OutingView } from "./src/providers/outing/outing-view";
 export { OutingService } from "./src/providers/outing/outing.service";
 export { PathService } from "./src/providers/path/path.service";
+export { PlatformStateService } from "./src/providers/platform-state/platform-state.service";
 export { ProfileService} from "./src/providers/profile/profile.service";
 export {
   ProfileConfirmationService,
