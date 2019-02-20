@@ -14,6 +14,7 @@ import {LatLonProvider} from "../providers/lat-lon/lat-lon";
 import {LocationService} from "../providers/location/location-service";
 import {OutingService} from "../providers/outing/outing.service";
 import {PathService} from "../providers/path/path.service";
+import {PlatformStateService} from "../providers/platform-state/platform-state.service";
 import {ProfileService} from "../providers/profile/profile.service";
 import {ProfileConfirmationService} from "../providers/profile-confirmation-service/profile-confirmation-service";
 import {PuzzleService} from "../providers/puzzle/puzzle-service";
@@ -55,6 +56,7 @@ export class ComponentsModule {
         LocationService,
         OutingService,
         PathService,
+        PlatformStateService,
         ProfileService,
         ProfileConfirmationService,
         PuzzleService,

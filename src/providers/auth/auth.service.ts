@@ -3,6 +3,7 @@ import Auth0Cordova from "@auth0/cordova";
 import {AUTH_CONFIG} from "./auth0-variables";
 import {Injectable} from "@angular/core";
 import {Observable} from "rxjs/Observable";
+import {PlatformStateService} from "../platform-state/platform-state.service";
 import {REGISTRATION_TYPE} from "./registration-type";
 import {RegStateService} from "../reg-state/reg-state.service";
 import {Subject} from "rxjs/Subject";
@@ -41,6 +42,7 @@ export class AuthService {
     public tokenService: TokenService,
     private regStateService: RegStateService,
     private userService: UserService,
+    private platformStateService: PlatformStateService,
   ) {
   }
 
@@ -229,7 +231,7 @@ export class AuthService {
 
   private logoutAuth0() {
     /** Messes up testing when we're running local. */
-    if (this.runningLocal()) {
+    if (this.platformStateService.runningLocal()) {
       return;
     }
 
@@ -267,17 +269,6 @@ export class AuthService {
   public bddLogin() {
     this.tokenService.bddRegister();
     this.userService.initializeProfile();
-  }
-
-  /**
-   * Looks at the current server location to tell if we're testing or not.
-   * TODO: Unsure if this should stay here or go someplace else.
-   * @returns {boolean}
-   */
-  public runningLocal() {
-    return (
-      window.location.toString().indexOf('http://localhost:8100') === 0
-    );
   }
 
 }
