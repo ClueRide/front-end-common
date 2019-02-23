@@ -6,6 +6,7 @@ import {
 } from "../../providers/profile-confirmation-service/profile-confirmation-service";
 import {ConfirmPage} from "../confirm/confirm";
 import {IonicPage, NavController} from 'ionic-angular';
+import {PlatformStateService} from "../../providers/platform-state/platform-state.service";
 import {ProfileConfirmationService} from "../../providers/profile-confirmation-service/profile-confirmation-service";
 import {Title} from "@angular/platform-browser";
 
@@ -25,6 +26,7 @@ export class RegistrationPage implements ConfirmationListener {
 
   constructor(
     public auth: AuthService,
+    public platformState: PlatformStateService,
     public profile: ProfileConfirmationService,
     public navCtrl: NavController,
     public titleService: Title,

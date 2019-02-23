@@ -56,7 +56,7 @@
       </div>
     </div>
 
-    <div id="bdd-mock-register" [hidden]="!auth.runningLocal()">
+    <div id="bdd-mock-register" [hidden]="!platformState.runningLocal()">
       <a (click)="auth.bddLogin()">BDD Mock Register</a>
     </div>
 
