@@ -109,4 +109,34 @@ export class LocationService {
     return this.locationMap[id];
   }
 
+  /**
+   * For Location Editor, retrieve set of Locations nearest the given position.
+   * @param latLon holds coordinates where we'd like to view the map of nearby locations.
+   */
+  nearest(latLon: LatLon): Observable<Location[]> {
+    return this.http.get<Location[]>(
+      BASE_URL + 'location/nearest-marker?lat=' + latLon.lat + '&lon=' + latLon.lon,
+      {headers: this.httpService.getAuthHeaders()}
+    );
+  }
+
+  /**
+   * Updates to a Location are sent to the server, and once complete,
+   * the updated Location is returned as the marble of this Observable.
+   * @param location to be updated.
+   */
+  update(location: Location): Observable<Location> {
+    return this.http.post<Location>(
+      BASE_URL + 'location/update',
+      location,
+      {headers: this.httpService.getAuthHeaders()}
+    );
+  }
+
+  removeFeaturedImage(locationId: number): Observable<Location> {
+    return this.http.delete<Location>(
+      BASE_URL + 'location/featured?id=' + locationId,
+      {headers: this.httpService.getAuthHeaders()}
+    );
+  }
 }

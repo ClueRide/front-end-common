@@ -30,6 +30,18 @@ export class PuzzleService {
     console.log('Hello PuzzleService');
   }
 
+  /**
+   * Returns Observable against the Puzzle REST API endpoint for
+   * the given Location ID.
+   * @param locationId unique identifier for the Location.
+   */
+  public getPuzzles(locationId: number): Observable<Puzzle[]> {
+    return this.http.get<Puzzle[]>(
+      BASE_URL + 'puzzle/location/' + locationId,
+      {headers: this.httpService.getAuthHeaders()}
+    );
+  }
+
   /* Build our cache of Puzzles per Location ID. */
   public loadSessionPuzzles(): Observable<any> {
     let puzzleSubject: Subject<boolean> = new Subject();
@@ -37,12 +49,8 @@ export class PuzzleService {
     this.expectedLocationCount = locationIds.length;
     for (let locationIndex in locationIds) {
       let locationId = locationIds[locationIndex].id;
-      this.http.get(
-        BASE_URL + 'puzzle/location/' + locationId,
-        {
-          headers: this.httpService.getAuthHeaders()
-        }
-      ).subscribe(
+
+      this.getPuzzles(locationId).subscribe(
         (response) => {
           if (response && (<Array<any>>response).length > 0) {
             let locationId = response[0].locationId;
@@ -58,6 +66,10 @@ export class PuzzleService {
     return puzzleSubject.asObservable();
   }
 
+  /**
+   * Returns cached puzzles for the given Location ID.
+   * @param locationId unique identifier for the Location.
+   */
   public getPuzzlesPerLocationId(locationId: number): Puzzle[] {
     return this.cachedPuzzles[locationId];
   }
