@@ -6,6 +6,7 @@ import {TokenService} from "../token/token.service";
  * Provides utility constructs for HttpClient calls.
  */
 export const BASE_URL: String = 'https://player.clueride.com/rest/';
+export const SSE_EVENT_BASE_URL: String = 'http://sse.clueride.com/';
 
 @Injectable()
 export class HttpService {
@@ -17,12 +18,11 @@ export class HttpService {
   }
 
   public getAuthHeaders(): HttpHeaders {
-    let commonHeaders:HttpHeaders = new HttpHeaders()
+    return new HttpHeaders()
       .append(
         'Authorization',
         'Bearer ' + this.tokenService.getBearerToken()
       );
-    return commonHeaders;
   }
 
 }
