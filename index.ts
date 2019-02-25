@@ -11,6 +11,7 @@ export { Course } from "./src/providers/course/course";
 export { CourseService } from "./src/providers/course/course-service";
 export { EdgeService } from "./src/providers/edge/edge.service";
 export { GeoLocService } from "./src/providers/geo-loc/geo-loc";
+export { HeartbeatComponentModule } from "./src/components/heartbeat/heartbeat.module";
 export { HttpService, BASE_URL} from "./src/providers/http/http.service";
 export { Invite } from "./src/providers/invite/invite";
 export { InviteState } from "./src/providers/invite/inviteState";
