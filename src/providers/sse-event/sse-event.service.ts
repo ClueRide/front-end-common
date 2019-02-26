@@ -1,12 +1,15 @@
 import {HttpClient} from '@angular/common/http';
 import {EventSourcePolyfill, OnMessageEvent} from "ng-event-source";
 import {Injectable} from '@angular/core';
+import {HeartbeatState} from "../../components/heartbeat/heartbeat-state";
 import {HttpService, SSE_EVENT_BASE_URL} from "../http/http.service";
 import {TokenService} from "../token/token.service";
 import {Subject} from "rxjs";
 
 export class Heartbeat {
-  event: OnMessageEvent
+  event: any;
+  lastId: string;
+  state: HeartbeatState;
 }
 
 /**
@@ -61,10 +64,12 @@ export class SseEventService {
     );
 
     this.eventSource.onmessage = (
-      (messageEvent: OnMessageEvent) => {
+      (messageEvent: any) => {
         console.log("SSE Heartbeat On Message Event: " + JSON.stringify(messageEvent));
         let heartbeat = new Heartbeat();
         heartbeat.event = messageEvent;
+        heartbeat.lastId = messageEvent.lastEventId;
+        heartbeat.state = HeartbeatState.CONNECTED;
         heartbeatSubject.next(heartbeat);
       }
     );
@@ -72,7 +77,10 @@ export class SseEventService {
     this.eventSource.onerror = (
       (error) => {
         console.log("SSE Heartbeat Error: " + JSON.stringify(error));
-        heartbeatSubject.error(error);
+        let heartbeat = new Heartbeat();
+        heartbeat.event = error;
+        heartbeat.state = HeartbeatState.DISCONNECTED;
+        heartbeatSubject.next(heartbeat);
       }
     );
 
