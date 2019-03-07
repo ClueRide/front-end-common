@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {BASE_URL, HttpService} from "../http/http.service";
+// tslint:disable-next-line
 import {Observable, Subscription} from "rxjs";
 import {Path} from "./path";
 import {CourseService} from "../course/course-service";

@@ -2,6 +2,7 @@ import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {Location} from './location';
 import {BASE_URL, HttpService} from "../http/http.service";
+// tslint:disable-next-line
 import {Observable, Subject} from "rxjs";
 import {OutingService} from "../outing/outing.service";
 import {LatLon} from "../lat-lon/lat-lon";

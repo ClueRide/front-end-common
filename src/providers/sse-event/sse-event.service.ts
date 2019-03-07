@@ -1,16 +1,8 @@
+import {EventSourcePolyfill} from "ng-event-source";
 import {HttpClient} from '@angular/common/http';
-import {EventSourcePolyfill, OnMessageEvent} from "ng-event-source";
-import {Injectable} from '@angular/core';
-import {HeartbeatState} from "../../components/heartbeat/heartbeat-state";
 import {HttpService, SSE_EVENT_BASE_URL} from "../http/http.service";
+import {Injectable} from '@angular/core';
 import {TokenService} from "../token/token.service";
-import {Subject} from "rxjs";
-
-export class Heartbeat {
-  event: any;
-  lastId: string;
-  state: HeartbeatState;
-}
 
 /**
  * Handles subscriptions to the SSE Server.
@@ -20,9 +12,8 @@ export class Heartbeat {
 @Injectable()
 export class SseEventService {
 
-  private eventSource: EventSourcePolyfill;
   /* Lazy init. */
-  static heartbeatSubject: Subject<Heartbeat> = null;
+  static eventSource: EventSourcePolyfill = null;
 
   constructor(
     public http: HttpClient,
@@ -32,59 +23,27 @@ export class SseEventService {
     console.log('Hello SseEventService Provider');
   }
 
-  public getHeartbeatSubject(): Subject<Heartbeat> {
-    if (SseEventService.heartbeatSubject == null) {
-      SseEventService.heartbeatSubject = this.initializeHeartbeatSubscription();
+  getEventSource(): EventSourcePolyfill {
+    if (SseEventService.eventSource == null) {
+      SseEventService.eventSource = this.initializeEventSource();
     }
-    return SseEventService.heartbeatSubject;
+    return SseEventService.eventSource;
   }
 
   /**
-   * Invoked when clients are prepared to pay attention to the Heartbeat events.
-   * OnMessage and Error events are turned into marbles in a Heartbeat Observable.
+   * Invoked to prepare connection to SSE Server and begin emitting
+   * the events that come in on that channel.
    */
-  initializeHeartbeatSubscription(): Subject<Heartbeat> {
+  initializeEventSource(): EventSourcePolyfill {
     let bearerToken = this.tokenService.getBearerToken();
-    let heartbeatSubject: Subject<Heartbeat> = new Subject<Heartbeat>();
-
-    console.log("Opening Event Source");
-    this.eventSource = new EventSourcePolyfill(
-      SSE_EVENT_BASE_URL + "heartbeat",
+    return new EventSourcePolyfill(
+      SSE_EVENT_BASE_URL + "sse-channel",
       {
         headers: {
           Authorization: `Bearer ${bearerToken}`
         }
       }
     );
-
-    this.eventSource.onopen = (
-      (openEvent) => {
-        console.log("SSE Heartbeat Open: " + JSON.stringify(openEvent))
-      }
-    );
-
-    this.eventSource.onmessage = (
-      (messageEvent: any) => {
-        console.log("SSE Heartbeat On Message Event: " + JSON.stringify(messageEvent));
-        let heartbeat = new Heartbeat();
-        heartbeat.event = messageEvent;
-        heartbeat.lastId = messageEvent.lastEventId;
-        heartbeat.state = HeartbeatState.CONNECTED;
-        heartbeatSubject.next(heartbeat);
-      }
-    );
-
-    this.eventSource.onerror = (
-      (error) => {
-        console.log("SSE Heartbeat Error: " + JSON.stringify(error));
-        let heartbeat = new Heartbeat();
-        heartbeat.event = error;
-        heartbeat.state = HeartbeatState.DISCONNECTED;
-        heartbeatSubject.next(heartbeat);
-      }
-    );
-
-    return heartbeatSubject;
   }
 
 }
