@@ -1,18 +1,18 @@
-heartbeat {
+connection-state {
 }
 
 .network-status {
-  font-size: xx-large;
+  font-size: xx-large !important;
 }
 
-.connected {
+.open {
   color: #00BF00;
 }
 
-.disconnected {
+.closed {
   color: #BF0000;
 }
 
-.retrying {
+.connecting {
   color: #BF7F00;
 }

@@ -8,6 +8,7 @@ import {ConfirmPage} from "../confirm/confirm";
 import {IonicPage, NavController} from 'ionic-angular';
 import {PlatformStateService} from "../../providers/platform-state/platform-state.service";
 import {ProfileConfirmationService} from "../../providers/profile-confirmation-service/profile-confirmation-service";
+// tslint:disable-next-line
 import {Title} from "@angular/platform-browser";
 
 /**

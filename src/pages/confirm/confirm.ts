@@ -1,6 +1,7 @@
 import {Component} from "@angular/core";
 import {IonicPage, NavController} from "ionic-angular";
 import {AuthService} from "../../providers/auth/auth.service";
+// tslint:disable-next-line
 import {Title} from "@angular/platform-browser";
 import {ProfileConfirmationService} from "../../providers/profile-confirmation-service/profile-confirmation-service";
 

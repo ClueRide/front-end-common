@@ -4,6 +4,7 @@ import {BASE_URL, HttpService} from "../http/http.service";
 import {Location} from "../location/location";
 import {LocationService} from "../location/location-service";
 import {Puzzle} from "./puzzle";
+// tslint:disable-next-line
 import {Observable, Subject} from "rxjs";
 
 /* Define structure for storing array of Puzzles per Location ID. */
