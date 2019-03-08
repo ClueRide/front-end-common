@@ -72,11 +72,13 @@ export class AuthService {
         this.getRegistrationState().subscribe(
           (authState) => {
             switch (authState) {
+
               case AuthState.REGISTERED:
                 isAuthenticted = true;
                 console.log("App is Registered on this device");
                 resolve(false);
                 break;
+
               case AuthState.UNREGISTERED:
                 console.log("App is Unregistered on this device");
                 resolve(true);
@@ -97,6 +99,9 @@ export class AuthService {
                   }
                 );
                 break;
+
+              case AuthState.NO_NETWORK_CONNECTION:
+                console.log("Unable to contact back-end");
             }
           }
         );
@@ -135,7 +140,7 @@ export class AuthService {
       () => {
         /* Problem. */
         console.log("Problem talking to the backend.");
-        authStateSubject.next(AuthState.UNREGISTERED);
+        authStateSubject.next(AuthState.NO_NETWORK_CONNECTION);
       }
     );
 
