@@ -2,6 +2,7 @@
  * Created by jett on 1/1/18.
  */
 
+export { Answer, AnswerKey } from "./src/providers/puzzle/answer";
 export { AuthService } from "./src/providers/auth/auth.service";
 export { AuthState } from  "./src/providers/auth/auth-state";
 export { Badge } from "./src/providers/badge/badge";
