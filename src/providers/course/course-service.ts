@@ -4,7 +4,8 @@ import {Course} from "./course";
 import {BASE_URL, HttpService} from "../http/http.service";
 import {Observable} from "rxjs";
 
-/** Caching service for the Course associated with the current session.
+/**
+ * Caching service for the Course associated with the current session.
  * This data is static for the duration of the session.
 */
 @Injectable()

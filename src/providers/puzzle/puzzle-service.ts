@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import {HttpClient} from '@angular/common/http';
 import {BASE_URL, HttpService} from "../http/http.service";
+import {Injectable} from '@angular/core';
 import {Location} from "../location/location";
 import {LocationService} from "../location/location-service";
 import {Puzzle} from "./puzzle";
@@ -12,7 +12,8 @@ interface PuzzlesPerLocationId {
   [locationId: number]: Puzzle[]
 }
 
-/** Caching service for the Puzzles and Answers associated with
+/**
+ * Caching service for the Puzzles and Answers associated with
  * each Location that is part of the Session's Course.
  * This data is static for the duration of the session.
  */
