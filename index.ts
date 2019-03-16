@@ -8,6 +8,7 @@ export { AuthState } from  "./src/providers/auth/auth-state";
 export { Badge } from "./src/providers/badge/badge";
 export { BadgeService } from "./src/providers/badge/badge.service";
 export { ComponentsModule } from "./src/components/components.module";
+export { ConfirmationState } from "./src/providers/profile-confirmation-service/confirmation-state";
 export { ConnectionStateComponentModule } from "./src/components/connection-state/connection-state.module";
 export { Course } from "./src/providers/course/course";
 export { CourseService } from "./src/providers/course/course-service";
@@ -26,11 +27,7 @@ export { OutingService } from "./src/providers/outing/outing.service";
 export { PathService } from "./src/providers/path/path.service";
 export { PlatformStateService } from "./src/providers/platform-state/platform-state.service";
 export { ProfileService} from "./src/providers/profile/profile.service";
-export {
-  ProfileConfirmationService,
-  ConfirmationListener,
-  ConfirmationState
-} from "./src/providers/profile-confirmation-service/profile-confirmation-service";
+export { ProfileConfirmationService } from "./src/providers/profile-confirmation-service/profile-confirmation-service";
 export { Puzzle } from "./src/providers/puzzle/puzzle";
 export { PuzzleService } from "./src/providers/puzzle/puzzle-service";
 export { RegStateService } from "./src/providers/reg-state/reg-state.service";
