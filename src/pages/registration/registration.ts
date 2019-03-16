@@ -28,18 +28,19 @@ export class RegistrationPage implements ConfirmationListener {
   constructor(
     public auth: AuthService,
     public platformState: PlatformStateService,
-    public profile: ProfileConfirmationService,
+    public profileConfirmationService: ProfileConfirmationService,
     public navCtrl: NavController,
     public titleService: Title,
   ) {
     /** Add ourselves to the list of profile listeners. */
-    profile.listeners.push(this);
+    profileConfirmationService.listeners.push(this);
   }
 
   ionViewDidEnter() {
     this.titleService.setTitle("Registration");
   }
 
+  // TODO: this appears to be how we get to the Confirmation page.
   public canWeSwitch(confirmationState: ConfirmationState) {
     if (confirmationState.authenticated && !confirmationState.confirmed) {
       this.navCtrl.push(ConfirmPage)

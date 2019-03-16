@@ -4,6 +4,7 @@ import {AuthService} from "../../providers/auth/auth.service";
 // tslint:disable-next-line
 import {Title} from "@angular/platform-browser";
 import {ProfileConfirmationService} from "../../providers/profile-confirmation-service/profile-confirmation-service";
+import {ProfileService} from "../../providers/profile/profile.service";
 
 /**
  * Generated class for the ConfirmPage page.
@@ -22,9 +23,11 @@ export class ConfirmPage {
   constructor(
     public auth: AuthService,
     public profileConfirmationService: ProfileConfirmationService,
+    public profile: ProfileService,
     public navCtrl: NavController,
     public titleService: Title,
   ) {
+    profile.loadMemberProfile();
   }
 
   ionViewDidLoad() {
