@@ -85,6 +85,7 @@ export class TokenService {
 
     this.setExpiresAtFromPayload(this.payload.exp);
 
+    // TODO: This indirectly affects the navigation to the Confirmation Page.
     this.profileConfirmationService.confirm(
       {
         authenticated: true,
@@ -98,6 +99,7 @@ export class TokenService {
   public setAccessToken(token) {
     this.setStorageVariable(STORAGE_KEYS.accessToken, token);
 
+    // TODO: This indirectly affects the navigation to the Confirmation Page.
     this.profileConfirmationService.confirm(
       {
         authenticated: true,
