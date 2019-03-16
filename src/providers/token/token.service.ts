@@ -15,7 +15,6 @@ export class TokenService {
   token: string;
 
   constructor(
-    private profileConfirmationService: ProfileConfirmationService
   ) {
     this.payload = JSON.parse(
       window.localStorage.getItem(STORAGE_KEYS.profile)
@@ -84,29 +83,11 @@ export class TokenService {
     );
 
     this.setExpiresAtFromPayload(this.payload.exp);
-
-    // TODO: This indirectly affects the navigation to the Confirmation Page.
-    this.profileConfirmationService.confirm(
-      {
-        authenticated: true,
-        confirmed: false
-      }
-    );
-
     this.setStorageVariable(STORAGE_KEYS.jwtToken, token);
   }
 
   public setAccessToken(token) {
     this.setStorageVariable(STORAGE_KEYS.accessToken, token);
-
-    // TODO: This indirectly affects the navigation to the Confirmation Page.
-    this.profileConfirmationService.confirm(
-      {
-        authenticated: true,
-        confirmed: false
-      }
-    );
-
   }
 
   public getRegistrationType(): string {

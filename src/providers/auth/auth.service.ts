@@ -4,6 +4,7 @@ import {AUTH_CONFIG} from "./auth0-variables";
 import {Injectable} from "@angular/core";
 import {Observable} from "rxjs/Observable";
 import {PlatformStateService} from "../platform-state/platform-state.service";
+import {ProfileConfirmationService} from "../profile-confirmation-service/profile-confirmation-service";
 import {REGISTRATION_TYPE} from "./registration-type";
 import {RegStateService} from "../reg-state/reg-state.service";
 import {Subject} from "rxjs/Subject";
@@ -19,7 +20,7 @@ auth0Config[REGISTRATION_TYPE.SOCIAL] = {
   // needed for auth0
   clientID: AUTH_CONFIG.clientID.social,
 
-    // needed for auth0cordova
+  // needed for auth0cordova
   clientId: AUTH_CONFIG.clientID.social,
   domain: AUTH_CONFIG.domain.social,
   packageIdentifier: 'com.clueride.client'  // Not obvious that this is used to build callback URL.
@@ -43,6 +44,7 @@ export class AuthService {
     private regStateService: RegStateService,
     private userService: UserService,
     private platformStateService: PlatformStateService,
+    private profileConfirmationService: ProfileConfirmationService,
   ) {
   }
 
@@ -183,22 +185,36 @@ export class AuthService {
   private register(registrationType: string) {
     const client = new Auth0Cordova(auth0Config[registrationType]);
     const options = {
-      scope: 'openid profile email'
+      scope: 'openid profile email offline_access',
+      audience: 'https://' + auth0Config[registrationType].domain + '/userinfo'
     };
 
     /**
      * Executes a PKCE to obtain Access Token for this session.
+     * @param options tells what we want to retrieve from 3rd-party auth service.
+     * @function what to do with the response from requesting an authentication.
      */
-    client.authorize(options, (err, authResult) => {
-      if(err) {
-        throw err;
-      }
+    client.authorize(
+      options,
+      (err, authResult) => {
+        if(err) {
+          throw err;
+        }
 
-      this.tokenService.setIdToken(authResult.idToken);
-      this.tokenService.setAccessToken(authResult.accessToken);
-      this.tokenService.setRegistrationType(registrationType);
-      this.userService.initializeProfile();
-    });
+        console.log("Auth Response: " + JSON.stringify(authResult));
+
+        /* Place the details into the Token Service. */
+        this.tokenService.setIdToken(authResult.idToken);
+        this.tokenService.setAccessToken(authResult.accessToken);
+        this.tokenService.setRegistrationType(registrationType);
+        this.userService.initializeProfile();
+
+        /* Signal we've got a profile that is not yet confirmed. */
+        this.profileConfirmationService.receiveAuthorization();
+
+      }
+    );
+
   }
 
   /**
