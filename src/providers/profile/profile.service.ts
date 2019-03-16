@@ -14,14 +14,15 @@ import {Member} from "./member";
 @Injectable()
 export class ProfileService {
 
-  profile: Member = {
+  member: Member = {
     id: null,
     displayName: "loading ...",
     firstName: "",
     lastName: "",
     phone: "",
     imageUrl: "",
-    emailAddress: ""
+    email: "",
+    emailAddress: "",
   };
 
   constructor (
@@ -34,50 +35,55 @@ export class ProfileService {
    * Client's call this to obtain the session's profile for caching.
    */
   public loadMemberProfile() {
-    this.http.get(
+    this.http.get<Member>(
       BASE_URL + 'member/active',
       {headers: this.httpService.getAuthHeaders()},
     ).subscribe(
       (response) => {
-        this.profile = <Member>response;
-        console.log("Logged in as " + this.profile.displayName);
+        this.member = response;
+        console.log("Logged in as " + this.member.displayName);
+        console.log("Email " + this.member.email);
+        console.log("Email Address " + this.member.emailAddress);
+        console.log("getPrincipal() " + this.getPrincipal());
       }
     );
   }
 
   public getPrincipal(): string {
-    if (this.profile) {
-      if (this.profile.emailAddress) {
-        return this.profile.emailAddress;
+    if (this.member) {
+      if (this.member.email && this.member.email.length > 0) {
+        return this.member.email;
+      } else if (this.member.emailAddress) {
+        return this.member.emailAddress;
       }
     }
     return "";
   }
 
   public getGivenName(): string {
-    if (this.profile) {
-      return this.profile.lastName;
+    if (this.member) {
+      return this.member.lastName;
     }
     return "";
   }
 
   public getDisplayName(): string {
-    if (this.profile) {
-      return this.profile.displayName;
+    if (this.member) {
+      return this.member.displayName;
     }
     return "";
   }
 
   public getUserImageUrl(): string {
-    if (this.profile) {
-      return this.profile.imageUrl;
+    if (this.member) {
+      return this.member.imageUrl;
     }
     return "";
   }
 
   /* Provides the ID of the profile, the Member ID. */
   public getCurrentMemberId() {
-    return this.profile.id;
+    return this.member.id;
   }
 
 }

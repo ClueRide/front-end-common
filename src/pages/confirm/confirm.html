@@ -19,7 +19,7 @@
   </div>
   <div>
     This is the email Clue Ride will use to issue any badges you may earn:
-    <span>{{profile.getPrincipal()}}</span>
+    <span>{{profile.member.emailAddress || profile.member.email}}</span>
   </div>
 
   <div>

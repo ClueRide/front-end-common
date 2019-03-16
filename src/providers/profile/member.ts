@@ -5,5 +5,6 @@ export class Member {
   lastName: string;
   phone: string;
   imageUrl: string;
+  email: string;
   emailAddress: string;
 }

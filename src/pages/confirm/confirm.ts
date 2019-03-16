@@ -27,7 +27,6 @@ export class ConfirmPage {
     public navCtrl: NavController,
     public titleService: Title,
   ) {
-    profile.loadMemberProfile();
   }
 
   ionViewDidLoad() {
@@ -36,6 +35,7 @@ export class ConfirmPage {
 
   ionViewDidEnter() {
     this.titleService.setTitle("Confirm Email");
+    this.profile.loadMemberProfile();
   }
 
   private returnToRegistrationPage(): Promise<any> {

@@ -1,7 +1,6 @@
 import {Injectable} from "@angular/core";
 import {STORAGE_KEYS} from "../storage-keys";
 import {BddMockToken} from "./bddMockToken";
-import {ProfileConfirmationService} from "../profile-confirmation-service/profile-confirmation-service";
 import {REGISTRATION_TYPE} from "../auth/registration-type";
 
 /**
