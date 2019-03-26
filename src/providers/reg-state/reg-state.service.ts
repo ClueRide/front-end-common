@@ -3,12 +3,13 @@ import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {Observable} from "rxjs/Observable";
 
-/*
-  Generated class for the RegStateProvider provider.
-
-  See https://angular.io/guide/dependency-injection for more info on providers
-  and Angular DI.
-*/
+/**
+ * Provides access to Registration State endpoint.
+ *
+ * By passing this client's Auth Headers, the back-end
+ * is able to check that token and decide whether or
+ * not this device has completed the registration.
+ */
 @Injectable()
 export class RegStateService {
 
