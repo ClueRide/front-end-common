@@ -1,12 +1,15 @@
+import {Image} from "../image/image";
 import {Injectable} from "@angular/core";
 import {LatLon} from "../lat-lon/lat-lon";
-import {Image} from "../image/image";
 
 /**
- * Created by jett on 7/10/17.
+ * Attractions are specific instances of Location; they have a
+ * puzzle defined for them.
+ *
+ * Created by jett on 3/23/19.
  */
 @Injectable()
-export class Location {
+export class Attraction {
 
   id: number;
   nodeId: number;   // Provides Lat/Lon
@@ -21,7 +24,4 @@ export class Location {
   featuredImage: Image;
   establishmentId?: number;
   readinessLevel: string;
-
 }
-
-

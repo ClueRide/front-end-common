@@ -3,6 +3,8 @@
  */
 
 export { Answer, AnswerKey } from "./src/providers/puzzle/answer";
+export { Attraction } from "./src/providers/attraction/attraction";
+export { AttractionService } from "./src/providers/attraction/attraction-service";
 export { AuthService } from "./src/providers/auth/auth.service";
 export { AuthState } from  "./src/providers/auth/auth-state";
 export { Badge } from "./src/providers/badge/badge";
@@ -15,15 +17,17 @@ export { CourseService } from "./src/providers/course/course-service";
 export { EdgeService } from "./src/providers/edge/edge.service";
 export { GeoLocService } from "./src/providers/geo-loc/geo-loc";
 export { HttpService, BASE_URL} from "./src/providers/http/http.service";
+export { Image } from "./src/providers/image/image";
 export { Invite } from "./src/providers/invite/invite";
 export { InviteState } from "./src/providers/invite/inviteState";
 export { InviteService } from "./src/providers/invite/invite.service";
 export { LatLon } from "./src/providers/lat-lon/lat-lon";
-export { Location, Image } from "./src/providers/location/location";
+export { Location } from "./src/providers/location/location";
 export { LocationService } from "./src/providers/location/location-service";
 export { ObservableGeoposition } from "./src/components/ObservableGeoposition";
 export { OutingView } from "./src/providers/outing/outing-view";
 export { OutingService } from "./src/providers/outing/outing.service";
+export { Path } from "./src/providers/path/path";
 export { PathService } from "./src/providers/path/path.service";
 export { PlatformStateService } from "./src/providers/platform-state/platform-state.service";
 export { ProfileService} from "./src/providers/profile/profile.service";

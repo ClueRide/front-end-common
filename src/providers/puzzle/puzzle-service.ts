@@ -1,36 +1,49 @@
+import {AttractionService} from "../attraction/attraction-service";
 import {HttpClient} from '@angular/common/http';
 import {BASE_URL, HttpService} from "../http/http.service";
 import {Injectable} from '@angular/core';
 import {Location} from "../location/location";
-import {LocationService} from "../location/location-service";
 import {Puzzle} from "./puzzle";
 // tslint:disable-next-line
 import {Observable, Subject} from "rxjs";
 
-/* Define structure for storing array of Puzzles per Location ID. */
-interface PuzzlesPerLocationId {
-  [locationId: number]: Puzzle[]
+/* Define structure for storing array of Puzzles per Attraction ID. */
+interface PuzzlesPerAttractionId {
+  [attractionId: number]: Puzzle[]
+}
+
+interface PuzzlesById {
+  [puzzleId: number]: Puzzle
 }
 
 /**
+ * Provides for both Puzzles against a Location during editing
+ * of that location, as well as the Session Cache of during game play.
+ *
+ * Functions referring to Location are for editing.
+ * Functions referring to Attraction are for playing.
+ *
  * Caching service for the Puzzles and Answers associated with
- * each Location that is part of the Session's Course.
- * This data is static for the duration of the session.
+ * each Attraction that is part of the Session's Course.
+ * This cache of data is static for the duration of the session.
  */
 @Injectable()
 export class PuzzleService {
+  private puzzles: PuzzlesById = {};
 
-  private cachedPuzzles: PuzzlesPerLocationId = {};
-  private expectedLocationCount: number;
-  private locationCount: number = 0;
+  private puzzlesPerAttractionId: PuzzlesPerAttractionId = {};
+  private expectedAttractionCount: number;
+  private attractionCount: number = 0;
 
   constructor(
     public http: HttpClient,
     private httpService: HttpService,
-    private locationService: LocationService,
+    private attractionService: AttractionService,
   ) {
     console.log('Hello PuzzleService');
   }
+
+  /* Editing Puzzles for prospective Locations. */
 
   /**
    * Returns Observable against the Puzzle REST API endpoint for
@@ -42,38 +55,6 @@ export class PuzzleService {
       BASE_URL + 'puzzle/location/' + locationId,
       {headers: this.httpService.getAuthHeaders()}
     );
-  }
-
-  /* Build our cache of Puzzles per Location ID. */
-  public loadSessionPuzzles(): Observable<any> {
-    let puzzleSubject: Subject<boolean> = new Subject();
-    let locationIds = this.locationService.getLocations();
-    this.expectedLocationCount = locationIds.length;
-    for (let locationIndex in locationIds) {
-      let locationId = locationIds[locationIndex].id;
-
-      this.getPuzzles(locationId).subscribe(
-        (response) => {
-          if (response && (<Array<any>>response).length > 0) {
-            let locationId = response[0].locationId;
-            this.cachedPuzzles[locationId] = <Puzzle[]> response;
-          }
-          this.locationCount++;
-          if (this.locationCount == this.expectedLocationCount) {
-            puzzleSubject.next(true);
-          }
-        }
-      )
-    }
-    return puzzleSubject.asObservable();
-  }
-
-  /**
-   * Returns cached puzzles for the given Location ID.
-   * @param locationId unique identifier for the Location.
-   */
-  public getPuzzlesPerLocationId(locationId: number): Puzzle[] {
-    return this.cachedPuzzles[locationId];
   }
 
   /** Provides an empty puzzle created by the Server. */
@@ -94,6 +75,57 @@ export class PuzzleService {
       puzzle,
       {headers: this.httpService.getAuthHeaders()}
     );
+  }
+
+  /* Caching Puzzles against Attractions. */
+
+  /**
+   * Build our Session's cache of Puzzles per Attraction ID.
+   *
+   * This also returns an observable that provides a marble when this is
+   * completely loaded.
+   */
+  public loadSessionPuzzles(): Observable<any> {
+    let puzzleSubject: Subject<boolean> = new Subject();
+    let attractionIds = this.attractionService.getAttractions();
+    this.expectedAttractionCount = attractionIds.length;
+    for (let attractionIndex in attractionIds) {
+      let attractionId = attractionIds[attractionIndex].id;
+
+      this.getPuzzles(attractionId).subscribe(
+        (response) => {
+          if (response && (<Array<any>>response).length > 0) {
+            let attractionId = response[0].locationId;
+            this.puzzlesPerAttractionId[attractionId] = <Puzzle[]> response;
+            /* Build array of all puzzles by ID. */
+            Observable.from(response).subscribe(
+              (puzzle) => {this.puzzles[puzzle.id] = puzzle}
+            );
+          }
+          this.attractionCount++;
+          if (this.attractionCount == this.expectedAttractionCount) {
+            puzzleSubject.next(true);
+          }
+        }
+      );
+    }
+    return puzzleSubject.asObservable();
+  }
+
+  /**
+   * Returns cached puzzles for the given Attraction ID.
+   * @param attractionId unique identifier for the Attraction.
+   */
+  public getPuzzlesPerAttractionId(attractionId: number): Puzzle[] {
+    return this.puzzlesPerAttractionId[attractionId];
+  }
+
+  /**
+   * Returns a specific puzzle by ID.
+   * @param puzzleId
+   */
+  getPuzzle(puzzleId: number): Puzzle {
+    return this.puzzles[puzzleId];
   }
 
 }

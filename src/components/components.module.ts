@@ -1,6 +1,8 @@
 // tslint:disable-next-line
 import {ModuleWithProviders, NgModule} from '@angular/core';
 import {IonicStorageModule} from "@ionic/storage";
+
+import {AttractionService} from "../providers/attraction/attraction-service";
 import {AuthService} from "../providers/auth/auth.service";
 import {BadgeService} from "../providers/badge/badge.service";
 import {ConfirmPageModule} from "../pages/confirm/confirm.module";
@@ -46,6 +48,7 @@ export class ComponentsModule {
     return {
       ngModule: ComponentsModule,
       providers: [
+        AttractionService,
         AuthService,
         BadgeService,
         CourseService,
