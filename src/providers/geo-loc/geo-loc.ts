@@ -1,27 +1,9 @@
-import {Geoposition} from "@ionic-native/geolocation";
-import {Subject} from "rxjs/Subject";
-// tslint:disable-next-line
-import {Restangular} from "ngx-restangular";
 import {DeviceGeoLocService} from "../device-geo-loc/device-geo-loc.service";
+import {Geoposition} from "@ionic-native/geolocation";
 import {isDefined} from "ionic-angular/util/util";
-import {LatLon} from "../lat-lon/lat-lon";
 import {Injectable} from "@angular/core";
 import {ObservableGeoposition} from "../../components/ObservableGeoposition";
-
-function buildGeoPositionFromLatLon(latLon: LatLon): Geoposition {
-  return {
-    coords: {
-      latitude: latLon.lat,
-      longitude: latLon.lon,
-      accuracy: 0.0,
-      altitude: null,
-      altitudeAccuracy: null,
-      heading: null,
-      speed: null
-    },
-    timestamp: null
-  };
-}
+import {Subject} from "rxjs/Subject";
 
 @Injectable()
 export class GeoLocService {
@@ -29,7 +11,6 @@ export class GeoLocService {
   /** A Subject for Tethered Position; only instantiated if needed. */
   private tetheredPosition: Subject<Geoposition>;
 
-  private restangularService: Restangular;
   private forceTether: boolean;
   private keepScheduling: boolean = false;
   static DEFAULT_GEOPOSITION: Geoposition = {
@@ -47,9 +28,7 @@ export class GeoLocService {
 
   constructor(
     private deviceGeoLocService: DeviceGeoLocService,
-    private restangular: Restangular
   ) {
-    this.restangularService = restangular;
   }
 
   /**
@@ -137,20 +116,21 @@ export class GeoLocService {
   }
 
   private startMonitoringTether(): void {
-    let monitorPromise = this.restangular.one("tether/dev").get().toPromise();
-    monitorPromise.then(
-      (latLon) => {
-        let geoPosition = buildGeoPositionFromLatLon(latLon);
-        this.tetheredPosition.next(geoPosition);
-        if (this.keepScheduling) {
-          setTimeout(() => {this.startMonitoringTether()}, 1500);
-        }
-      }
-    ).catch(
-      (error) => {
-        console.log(error);
-      }
-    );
+    // TODO: FEC-47 Replace this with the SSE Tether service.
+    // let monitorPromise = this.restangular.one("tether/dev").get().toPromise();
+    // monitorPromise.then(
+    //   (latLon) => {
+    //     let geoPosition = buildGeoPositionFromLatLon(latLon);
+    //     this.tetheredPosition.next(geoPosition);
+    //     if (this.keepScheduling) {
+    //       setTimeout(() => {this.startMonitoringTether()}, 1500);
+    //     }
+    //   }
+    // ).catch(
+    //   (error) => {
+    //     console.log(error);
+    //   }
+    // );
   }
 
   private stopMonitoringTether() {

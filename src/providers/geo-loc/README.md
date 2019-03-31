@@ -18,7 +18,7 @@ Table
 |------|---------------------|------------|
 | Browser | Single unchanging | When testing on desktop browser |
 | GPS     | New position as device moves around | Mobile device in the field. |
-| Tether  | New positions over time | 
+| Tether  | New positions over time | Following the Team's (Guide's) position while playing the game. |
 
 **Tether Notes**
 

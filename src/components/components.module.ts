@@ -22,9 +22,6 @@ import {ProfileConfirmationService} from "../providers/profile-confirmation-serv
 import {PuzzleService} from "../providers/puzzle/puzzle-service";
 import {RegistrationPageModule} from "../pages/registration/registration.module";
 import {RegStateService} from "../providers/reg-state/reg-state.service";
-import {Resource} from "../providers/resources/resource";
-import {RestangularModule} from "ngx-restangular";
-import {RestangularConfigFactory} from "../providers/resources/resource.config";
 import {SseEventService} from "../providers/sse-event/sse-event.service";
 import {TeamService} from "../providers/team/team-service";
 import {TokenService} from "../providers/token/token.service";
@@ -35,11 +32,7 @@ import {UserService} from "../providers/user/user.service";
     ConfirmPageModule,
     IonicStorageModule.forRoot({driverOrder:  ['localstorage', 'sqlite', 'indexeddb', 'websql']}),
     RegistrationPageModule,
-    RestangularModule.forRoot(RestangularConfigFactory),
   ],
-  providers: [
-    Resource
-  ]
 })
 
 export class ComponentsModule {

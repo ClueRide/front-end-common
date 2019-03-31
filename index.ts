@@ -35,7 +35,6 @@ export { ProfileConfirmationService } from "./src/providers/profile-confirmation
 export { Puzzle } from "./src/providers/puzzle/puzzle";
 export { PuzzleService } from "./src/providers/puzzle/puzzle-service";
 export { RegStateService } from "./src/providers/reg-state/reg-state.service";
-export { Resource } from "./src/providers/resources/resource";
 export { RegistrationPage } from "./src/pages/registration/registration";
 export { SessionInviteState } from "./src/providers/invite/sessionInviteState";
 export { Team } from "./src/providers/team/team";
