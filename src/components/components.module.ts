@@ -10,6 +10,7 @@ import {CourseService} from "../providers/course/course-service";
 import {DeviceGeoLocService} from "../providers/device-geo-loc/device-geo-loc.service";
 import {EdgeService} from "../providers/edge/edge.service";
 import {GeoLocService} from "../providers/geo-loc/geo-loc";
+import {HttpClientModule} from "@angular/common/http";
 import {HttpService} from "../providers/http/http.service";
 import {InviteService} from "../providers/invite/invite.service";
 import {LatLonProvider} from "../providers/lat-lon/lat-lon";
@@ -30,6 +31,7 @@ import {UserService} from "../providers/user/user.service";
 @NgModule({
   imports: [
     ConfirmPageModule,
+    HttpClientModule,
     IonicStorageModule.forRoot({driverOrder:  ['localstorage', 'sqlite', 'indexeddb', 'websql']}),
     RegistrationPageModule,
   ],
