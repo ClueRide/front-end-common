@@ -26,7 +26,6 @@ import {RegStateService} from "../providers/reg-state/reg-state.service";
 import {SseEventService} from "../providers/sse-event/sse-event.service";
 import {TeamService} from "../providers/team/team-service";
 import {TokenService} from "../providers/token/token.service";
-import {UserService} from "../providers/user/user.service";
 
 @NgModule({
   imports: [
@@ -64,7 +63,6 @@ export class ComponentsModule {
         SseEventService,
         TeamService,
         TokenService,
-        UserService,
       ]
     }
   }

@@ -1,16 +1,16 @@
-import {AuthState} from "./auth-state";
-import Auth0Cordova from "@auth0/cordova";
-import {AUTH_CONFIG} from "./auth0-variables";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Injectable} from "@angular/core";
+import Auth0Cordova from "@auth0/cordova";
+import {WebAuth} from "auth0-js";
 import {Observable} from "rxjs/Observable";
+import {Subject} from "rxjs/Subject";
 import {PlatformStateService} from "../platform-state/platform-state.service";
 import {ProfileConfirmationService} from "../profile-confirmation-service/profile-confirmation-service";
-import {REGISTRATION_TYPE} from "./registration-type";
 import {RegStateService} from "../reg-state/reg-state.service";
-import {Subject} from "rxjs/Subject";
 import {TokenService} from "../token/token.service";
-import {UserService} from "../user/user.service";
-import {WebAuth} from "auth0-js";
+import {AuthState} from "./auth-state";
+import {AUTH_CONFIG} from "./auth0-variables";
+import {REGISTRATION_TYPE} from "./registration-type";
 
 let auth0Config = {};
 
@@ -42,9 +42,9 @@ export class AuthService {
   constructor(
     public tokenService: TokenService,
     private regStateService: RegStateService,
-    private userService: UserService,
     private platformStateService: PlatformStateService,
     private profileConfirmationService: ProfileConfirmationService,
+    private http: HttpClient,
   ) {
   }
 
@@ -54,61 +54,6 @@ export class AuthService {
    */
   public isAuthenticated() {
     return isAuthenticted;
-  }
-
-  /**
-   * Uses the registration state to tell if the device has been
-   * registered for this app and allow the caller to present a
-   * different page if registration is required.
-   *
-   * This returns a promise because in the case where we try to
-   * renew the token for a registered device, there is the
-   * possibility that the caller would use an expired token instead
-   * of the one obtained via an asynchronous renewal performed within
-   * this call.
-   * @returns {Promise<boolean>} true if registration is needed.
-   */
-  public checkRegistrationRequired(): Promise<boolean> {
-    return new Promise(
-      (resolve, reject) => {
-        this.getRegistrationState().subscribe(
-          (authState) => {
-            switch (authState) {
-
-              case AuthState.REGISTERED:
-                isAuthenticted = true;
-                console.log("App is Registered on this device");
-                resolve(false);
-                break;
-
-              case AuthState.UNREGISTERED:
-                console.log("App is Unregistered on this device");
-                resolve(true);
-                break;
-
-              case AuthState.EXPIRED:
-                /* I don't think this case comes out of getRegistrationState() */
-                console.log("Token is expired; attempting to renew");
-                this.renew().then(
-                  () => {
-                    console.log("Successful Renew?");
-                    resolve(false);
-                  }
-                ).catch(
-                  () => {
-                    console.log("Problem with Renew?");
-                    resolve(true);
-                  }
-                );
-                break;
-
-              case AuthState.NO_NETWORK_CONNECTION:
-                console.log("Unable to contact back-end");
-            }
-          }
-        );
-      }
-    );
   }
 
   /**
@@ -129,6 +74,13 @@ export class AuthService {
       return authStateSubject.asObservable();
     }
 
+    /* Check for renewal; if not running locally. */
+    if (!this.platformStateService.runningLocal()) {
+      if (this.tokenService.willExpireWithinGracePeriod()) {
+        this.renew();
+      }
+    }
+
     this.regStateService.isRegistered().subscribe(
       (result) => {
         if (result) {
@@ -147,6 +99,39 @@ export class AuthService {
     );
 
     return authStateSubject.asObservable();
+  }
+
+  /**
+   * Attempt to obtain a new set of tokens for the expired token
+   * this device currently holds.
+   *
+   * Notes from https://auth0.com/docs/tokens/refresh-token/current
+   * suggest that we'll be making a regular HTTP request and won't need
+   * to use the Auth0Cordova client.
+   */
+  private async renew() {
+    /* Social media or passwordless (email-based) are the two types supported. */
+    let registrationType: string = this.tokenService.getRegistrationType();
+
+    let postBody = {
+      grant_type: 'refresh_token',
+      client_id: auth0Config[registrationType].clientId,
+      refresh_token: this.tokenService.getRefreshToken(),
+    };
+
+    console.log("Attempting Renewal");
+    let authResult = <any>await this.http.post(
+      'https://' + auth0Config[registrationType].domain + '/oauth/token',
+      postBody,
+      {headers:
+          new HttpHeaders().append('content-type', 'application/json')
+      }
+    ).toPromise();
+
+    console.log("Picked up new Access Token");
+    /* NOTE: these property names use snake_case instead of camelCase. */
+    this.tokenService.unpackAndStorePayload(authResult.id_token);
+    this.tokenService.setAccessToken(authResult.access_token);
   }
 
   /**
@@ -182,6 +167,16 @@ export class AuthService {
     this.register(REGISTRATION_TYPE.PASSWORDLESS);
   }
 
+  /**
+   * Given the type (passwordless or social), invoke the Auth0 3rd-party service
+   * to retrieve the following for this device:
+   * <ul>
+   *     <li>Access Token.
+   *     <li>Expiration Timestamp for that token.
+   *     <li>Refresh Token for retrieving new Access Token once old one expires.
+   * </ul>
+   * @param registrationType
+   */
   private register(registrationType: string) {
     const client = new Auth0Cordova(auth0Config[registrationType]);
     const options = {
@@ -204,50 +199,16 @@ export class AuthService {
         console.log("Auth Response: " + JSON.stringify(authResult));
 
         /* Place the details into the Token Service. */
-        this.tokenService.setIdToken(authResult.idToken);
+        this.tokenService.unpackAndStorePayload(authResult.idToken);
         this.tokenService.setAccessToken(authResult.accessToken);
         this.tokenService.setRegistrationType(registrationType);
-        this.userService.initializeProfile();
+        this.tokenService.setRefreshToken(authResult.refreshToken);
 
         /* Signal we've got a profile that is not yet confirmed. */
         this.profileConfirmationService.receiveAuthorization();
-
       }
     );
 
-  }
-
-  /**
-   * Attempt to obtain a new set of tokens for the expired token
-   * this device currently holds.
-   * TODO: Use the stored renewal token; this isn't a real renew yet.
-   */
-  public renew() {
-    let registrationType: string = this.tokenService.getRegistrationType();
-    return new Promise(
-      (resolve, reject) => {
-
-        let client = new Auth0Cordova(auth0Config[registrationType]);
-        let options = {
-          scope: 'openid profile email',
-        };
-
-        client.authorize(options,
-          (err, authResult) => {
-            if (err) {
-              console.log(err);
-              reject(err);
-            } else {
-              this.tokenService.setIdToken(authResult.idToken);
-              this.tokenService.setAccessToken(authResult.accessToken);
-              this.userService.initializeProfile();
-              resolve(false);
-            }
-          }
-        );
-
-      }
-    );
   }
 
   private logoutAuth0() {
@@ -289,7 +250,6 @@ export class AuthService {
    */
   public bddLogin() {
     this.tokenService.bddRegister();
-    this.userService.initializeProfile();
   }
 
 }

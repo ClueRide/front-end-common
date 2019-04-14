@@ -3,6 +3,9 @@ import {STORAGE_KEYS} from "../storage-keys";
 import {BddMockToken} from "./bddMockToken";
 import {REGISTRATION_TYPE} from "../auth/registration-type";
 
+/* Period within which we renew an expiring token in milliseconds. */
+export const EXPIRATION_GRACE_MILLIS: number = 4 * 3600 * 1000;
+
 /**
  * Provides functionality for working with the app's JWT token
  * that was obtained using the AuthService and stored locally.
@@ -54,6 +57,19 @@ export class TokenService {
     );
   }
 
+  getRefreshToken(): string {
+    return window.localStorage.getItem(
+      STORAGE_KEYS.refreshToken
+    );
+  }
+
+  setRefreshToken(refreshToken: string): void {
+    window.localStorage.setItem(
+      STORAGE_KEYS.refreshToken,
+      refreshToken
+    );
+  }
+
   /**
    * Removes all credential information from the Store.
    * @returns {Promise<null>}
@@ -74,15 +90,22 @@ export class TokenService {
     window.localStorage.setItem(name, JSON.stringify(data));
   }
 
-  public setIdToken(token) {
-    this.payload = this.decodePayload(token);
+  /**
+   * This handles raw profile info (payload) and explicitly
+   * pulls the Expiration into a separate value to be stored.
+   * The original un-decoded JWT token is also persisted.
+   *
+   * @param jwtToken the raw un-decoded JWT from the Auth service.
+   */
+  public unpackAndStorePayload(jwtToken) {
+    this.payload = this.decodePayload(jwtToken);
     this.setStorageVariable(
       STORAGE_KEYS.profile,
       this.payload
     );
 
     this.setExpiresAtFromPayload(this.payload.exp);
-    this.setStorageVariable(STORAGE_KEYS.jwtToken, token);
+    this.setStorageVariable(STORAGE_KEYS.jwtToken, jwtToken);
   }
 
   public setAccessToken(token) {
@@ -98,6 +121,16 @@ export class TokenService {
       STORAGE_KEYS.registrationType,
       registrationType
     );
+  }
+
+  /**
+   * Checks expiration Date and returns true if the token has expired.
+   *
+   * Will recommend renewal if the token is within certain number of hours of needing renewal.
+   */
+  willExpireWithinGracePeriod(): boolean {
+    const now = Date.now();
+    return (now + EXPIRATION_GRACE_MILLIS) > this.getExpiresAtMilliseconds();
   }
 
   /**
