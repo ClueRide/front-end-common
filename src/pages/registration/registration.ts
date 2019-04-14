@@ -6,6 +6,7 @@ import {PlatformStateService} from "../../providers/platform-state/platform-stat
 import {ProfileConfirmationService} from "../../providers/profile-confirmation-service/profile-confirmation-service";
 // tslint:disable-next-line
 import {Title} from "@angular/platform-browser";
+// tslint:disable-next-line
 import {Subscription} from "rxjs";
 
 /**

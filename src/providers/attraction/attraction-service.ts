@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {BASE_URL, HttpService} from "../http/http.service";
 import {Injectable} from '@angular/core';
 import {OutingService} from "../outing/outing.service";
+// tslint:disable-next-line
 import {Observable, Subject} from "rxjs";
 
 interface AttractionMap {
