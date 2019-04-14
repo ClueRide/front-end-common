@@ -10,7 +10,6 @@ import {SecureStorageMock} from "@ionic-native-mocks/secure-storage";
 import {RegStateService} from "../reg-state/reg-state.service";
 import {HttpService} from "../http/http.service";
 import {HttpClientTestingModule, HttpTestingController} from "@angular/common/http/testing";
-import {UserService} from "../user/user.service";
 /**
  * Created by jett on 2/5/18.
  */
@@ -35,7 +34,6 @@ describe("Services: AuthService", () => {
         RegStateService,
         SecureStorageMock,
         TokenService,
-        UserService,
         Platform
       ],
       imports: [

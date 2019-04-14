@@ -1,9 +1,10 @@
 interface StorageKeySet {
-  profile: string;
-  jwtToken: string;
-  accessToken: string;
-  expiresAt: string;
-  registrationType: string;
+  readonly profile: string;
+  readonly jwtToken: string;
+  readonly accessToken: string;
+  readonly expiresAt: string;
+  readonly refreshToken: string;
+  readonly registrationType: string;
 }
 
 /**
@@ -12,9 +13,10 @@ interface StorageKeySet {
  */
 
 export const STORAGE_KEYS: StorageKeySet = {
-  profile: 'profile',
-  jwtToken: 'id_token',
   accessToken: 'access_token',
   expiresAt: 'expires_at',
+  jwtToken: 'id_token',
+  profile: 'profile',
+  refreshToken: 'refresh_token',
   registrationType: 'registration_type',
 };
