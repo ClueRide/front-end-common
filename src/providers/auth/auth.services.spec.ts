@@ -50,64 +50,6 @@ describe("Services: AuthService", () => {
     expect(toTest).toBeDefined();
   });
 
-  describe("checkRegistrationRequired", () => {
-
-    it("should resolve true when unregistered",
-      inject(
-        [HttpTestingController],
-        (httpMock: HttpTestingController) => {
-
-          /* make call */
-          let actualPromise = toTest.checkRegistrationRequired();
-
-          /* verify results */
-          actualPromise.then(
-            (actual) => {
-              expect(actual).toBeTruthy();
-            }
-          );
-        }
-      )
-    );
-
-    it("should resolve false when registered",
-      inject(
-        [HttpTestingController],
-        (httpMock: HttpTestingController) => {
-
-          /* setup data */
-          tokenService.bddRegister();
-
-          /* make call */
-          let actualPromise = toTest.checkRegistrationRequired();
-
-          /* Set HTTP expectations. */
-          const requestExpectation = httpMock.expectOne("https://player.clueride.com/rest/access/state");
-          expect(requestExpectation.request.method).toEqual('GET');
-
-          /* Mock the HTTP response. */
-          requestExpectation.flush(
-            "true",
-            {
-              status: 200,
-              statusText: 'OK'
-            }
-          );
-
-          /* verify results */
-          actualPromise.then(
-            (actual) => {
-              expect(actual).toBeFalsy();
-              // done();
-            }
-          );
-
-        }
-      )
-    );
-
-  });
-
   describe("getRegistrationState", () => {
 
     it("should return UNREGISTERED when tokens are empty",

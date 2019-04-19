@@ -22,8 +22,7 @@ describe("Geo-Location", () => {
     deviceGeoLocService = new DeviceGeoLocService();
 
     toTest = new GeoLocService(
-      deviceGeoLocService,
-      restangularService
+      deviceGeoLocService
     );
 
   });
