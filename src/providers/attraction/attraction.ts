@@ -24,4 +24,6 @@ export class Attraction {
   featuredImage: Image;
   establishmentId?: number;
   readinessLevel: string;
+  isLast?: boolean;
+  isCurrent?: boolean;
 }

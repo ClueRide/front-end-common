@@ -5,6 +5,7 @@ import {Injectable} from '@angular/core';
 import {OutingService} from "../outing/outing.service";
 // tslint:disable-next-line
 import {Observable, Subject} from "rxjs";
+import {from} from "rxjs/observable/from";
 
 interface AttractionMap {
   [index: number]: Attraction;
@@ -80,12 +81,39 @@ export class AttractionService {
 
   /**
    * Return a list of the Attractions we have unlocked or are about to arrive at next.
+   *
+   * This also sets flags on the attractions that indicate which is the current attraction
+   * and which is the next attraction.
    */
   public getVisibleAttractions(lastAttractionIndex: number): Attraction[] {
     let currentIndex = lastAttractionIndex + 1;
     this.currentAttractionId = this.cachedAttractions[currentIndex].id;
-    /* 2 is added to a) adjust to one-based index and b) show the end of the path, not just the start. */
-    return this.cachedAttractions.slice(0, lastAttractionIndex+2);
+
+    return this.classifyVisibleAttractions(
+      /* 2 is added to a) adjust to one-based index and b) show the end of the path, not just the start. */
+      this.cachedAttractions.slice(0, lastAttractionIndex+2)
+    );
+
+  }
+
+  public classifyVisibleAttractions(visibleAttractions: Attraction[]): Attraction[] {
+    const lastAttractionIndex: number = visibleAttractions.length;
+    from(visibleAttractions)
+      .subscribe(
+        (attraction: Attraction) => {
+          attraction.isCurrent = false;
+          attraction.isLast = false;
+        }
+      );
+
+    if (lastAttractionIndex == 1) {
+      visibleAttractions[0].isCurrent = true;
+    } else {
+      visibleAttractions[lastAttractionIndex - 1].isLast = true;
+      visibleAttractions[lastAttractionIndex - 2].isCurrent = true;
+    }
+
+    return visibleAttractions;
   }
 
   /**
