@@ -60,4 +60,12 @@ export class TeamService {
     );
   }
 
+  /* Retrieves a specific team by ID. */
+  getTeamById(id: number): Observable<Team> {
+    return this.http.get<Team>(
+      BASE_URL + 'team/' + id,
+      {headers: this.httpService.getAuthHeaders()}
+    );
+  }
+
 }
