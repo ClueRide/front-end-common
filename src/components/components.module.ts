@@ -15,6 +15,7 @@ import {HttpService} from "../providers/http/http.service";
 import {InviteService} from "../providers/invite/invite.service";
 import {LatLonProvider} from "../providers/lat-lon/lat-lon";
 import {LocationService} from "../providers/location/location-service";
+import {MemberService} from "../providers/member/member.service";
 import {OutingService} from "../providers/outing/outing.service";
 import {PathService} from "../providers/path/path.service";
 import {PlatformStateService} from "../providers/platform-state/platform-state.service";
@@ -53,6 +54,7 @@ export class ComponentsModule {
         InviteService,
         LatLonProvider,
         LocationService,
+        MemberService,
         OutingService,
         PathService,
         PlatformStateService,
