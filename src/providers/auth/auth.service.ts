@@ -87,13 +87,13 @@ export class AuthService {
           console.log("Backend thinks we're registered.");
           authStateSubject.next(AuthState.REGISTERED);
         } else {
-          console.log("Backend thinks we're not registered.");
+          console.log("Backend thinks we're either expired or not registered.");
           authStateSubject.next(AuthState.UNREGISTERED);
         }
       },
       () => {
         /* Problem. */
-        console.log("Problem talking to the backend.");
+        console.error("Problem talking to the backend.");
         authStateSubject.next(AuthState.NO_NETWORK_CONNECTION);
       }
     );
@@ -120,7 +120,7 @@ export class AuthService {
     };
 
     console.log("Attempting Renewal");
-    let authResult = <any>await this.http.post(
+    let renewResponse = <any>await this.http.post(
       'https://' + auth0Config[registrationType].domain + '/oauth/token',
       postBody,
       {headers:
@@ -130,8 +130,9 @@ export class AuthService {
 
     console.log("Picked up new Access Token");
     /* NOTE: these property names use snake_case instead of camelCase. */
-    this.tokenService.unpackAndStorePayload(authResult.id_token);
-    this.tokenService.setAccessToken(authResult.access_token);
+    this.tokenService.unpackAndStorePayload(renewResponse.id_token);
+    this.tokenService.setExpiresAtFromPeriod(renewResponse.expires_in);
+    this.tokenService.setAccessToken(renewResponse.access_token);
   }
 
   /**
@@ -203,6 +204,7 @@ export class AuthService {
         this.tokenService.setAccessToken(authResult.accessToken);
         this.tokenService.setRegistrationType(registrationType);
         this.tokenService.setRefreshToken(authResult.refreshToken);
+        this.tokenService.setExpiresAtFromPeriod(86400);
 
         /* Signal we've got a profile that is not yet confirmed. */
         this.profileConfirmationService.receiveAuthorization();

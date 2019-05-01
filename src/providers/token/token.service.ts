@@ -49,11 +49,19 @@ export class TokenService {
     return JSON.parse(decoded);
   }
 
-  setExpiresAtFromPayload(payloadExpAttribute: string): void {
-    let expiresAtMilliseconds = JSON.parse(payloadExpAttribute) * 1000;
-    window.localStorage.setItem(
+  /**
+   * When given 'expires_in' instead of 'expires_at', we calculate the expiration time based on adding the
+   * given value to the current time.
+   *
+   * Grace period should avoid the delay in milliseconds between receiving the value and when we attempt to renew.
+   *
+   * @param expiration_period_in_seconds
+   */
+  setExpiresAtFromPeriod(expiration_period_in_seconds: number): void {
+    const expiresAt = Date.now() + (1000 * expiration_period_in_seconds);
+    this.setStorageVariable(
       STORAGE_KEYS.expiresAt,
-      JSON.stringify(expiresAtMilliseconds)
+      JSON.stringify(expiresAt)
     );
   }
 
@@ -104,7 +112,6 @@ export class TokenService {
       this.payload
     );
 
-    this.setExpiresAtFromPayload(this.payload.exp);
     this.setStorageVariable(STORAGE_KEYS.jwtToken, jwtToken);
   }
 
@@ -146,6 +153,10 @@ export class TokenService {
     /* Record the token we'll use for testing. */
     this.setAccessToken(bddMockToken.accessToken);
     this.setRegistrationType(REGISTRATION_TYPE.SOCIAL);
+  }
+
+  hasRefreshToken() {
+    return !!this.getRefreshToken();
   }
 
 }

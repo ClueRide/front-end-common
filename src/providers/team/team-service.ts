@@ -2,10 +2,17 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {BASE_URL, HttpService} from "../http/http.service";
 import {Team} from "./team";
+// tslint:disable-next-line
 import {Observable} from "rxjs";
 
-/** Caching service for the Team associated with this Session.
+/**
+ * Handles calls to Team endpoints.
+ *
+ * The caching service handles the Team associated with a Session.
  * This data is static for the duration of the session.
+ *
+ * This also supports Invitations and creating the teams to be
+ * invited.
  */
 @Injectable()
 export class TeamService {
