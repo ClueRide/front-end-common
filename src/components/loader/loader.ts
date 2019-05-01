@@ -1,3 +1,4 @@
+// tslint:disable-next-line
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {LoadingController} from "ionic-angular";
 

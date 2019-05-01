@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {BASE_URL, HttpService} from "../http/http.service";
 import {Member} from "../profile/member";
+// tslint:disable-next-line
 import {Observable} from "rxjs";
 
 /**
