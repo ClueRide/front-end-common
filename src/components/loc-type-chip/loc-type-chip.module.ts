@@ -1,5 +1,5 @@
 import {NgModule} from "@angular/core";
-import {LocTypeChipComponent} from "./loc-type-chip";
+import {LocTypeChipComponent} from "./loc-type-chip.component";
 import {IonicPageModule} from "ionic-angular";
 
 @NgModule({
