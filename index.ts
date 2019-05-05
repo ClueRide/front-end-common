@@ -9,6 +9,7 @@ export { AuthService } from "./src/providers/auth/auth.service";
 export { AuthState } from  "./src/providers/auth/auth-state";
 export { Badge } from "./src/providers/badge/badge";
 export { BadgeService } from "./src/providers/badge/badge.service";
+export { Category } from "./src/providers/category/category";
 export { ComponentsModule } from "./src/components/components.module";
 export { ConfirmationState } from "./src/providers/profile-confirmation-service/confirmation-state";
 export { ConnectionStateComponentModule } from "./src/components/connection-state/connection-state.module";
