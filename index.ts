@@ -27,6 +27,7 @@ export { LoaderComponentModule } from "./src/components/loader/loader.module";
 export { Location } from "./src/providers/location/location";
 export { LocationService } from "./src/providers/location/location-service";
 export { LocationType } from "./src/providers/loc-type/loc-type";
+export { LocLink } from "./src/providers/loc-link/loc-link";
 export { LocTypeService } from "./src/providers/loc-type/loc-type.service";
 export { LocTypeChipModule } from "./src/components/loc-type-chip/loc-type-chip.module";
 export { MemberChipComponentModule } from "./src/components/member-chip/member-chip.module";

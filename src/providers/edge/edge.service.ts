@@ -10,7 +10,7 @@ import {Observable} from "rxjs";
 export class EdgeService {
 
   constructor(
-    public http: HttpClient,
+    private http: HttpClient,
     private httpService: HttpService,
   ) {
     console.log('Hello EdgeProvider Provider');

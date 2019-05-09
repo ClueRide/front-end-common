@@ -44,16 +44,6 @@ export class LocTypeService {
     return cacheFilledSubject.asObservable();
   }
 
-  /** Moves the specified element to the top of the array. */
-  public recentToTop(elementIndex) {
-    let list = LocTypeService.locationTypeCache;
-    let recentItem = list[elementIndex];
-    if (elementIndex > 0) {
-      list.splice(elementIndex, 1);
-      list.unshift(recentItem);
-    }
-  }
-
   public allLocationTypes(): Array<LocationType> {
     return LocTypeService.locationTypeCache;
   }
