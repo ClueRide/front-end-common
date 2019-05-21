@@ -208,6 +208,7 @@ export class AuthService {
 
         /* Signal we've got a profile that is not yet confirmed. */
         this.profileConfirmationService.receiveAuthorization();
+        // TODO: Maybe PLAY-86 Fail to show email address to be confirmed.
       }
     );
 
@@ -216,6 +217,7 @@ export class AuthService {
   private logoutAuth0() {
     /** Messes up testing when we're running local. */
     if (this.platformStateService.runningLocal()) {
+      console.log("Running Local - skip remote logout");
       return;
     }
 
@@ -234,6 +236,7 @@ export class AuthService {
       webAuth.logout({
         client_iD: clientId,
       });
+      // TODO: FEC-52 "OK" page because we do nothing with the result? or no callback?
     }
   }
 
