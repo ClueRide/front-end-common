@@ -31,9 +31,19 @@ export class TokenService {
     return JSON.parse(window.localStorage.getItem(STORAGE_KEYS.accessToken))
   }
 
+  /**
+   * Returns 'true' if we have a non-empty access token.
+   */
   public hasAccessToken(): boolean {
     let token = window.localStorage.getItem(STORAGE_KEYS.accessToken);
     return (token && token.length > 0);
+  }
+
+  /**
+   * Checks the expiration timestamp (less grace period) to tell if it is time to renew the access token.
+   */
+  public hasAccessTokenExpired(): boolean {
+    return this.willExpireWithinGracePeriod();
   }
 
   decodePayload(fullToken: string): any {

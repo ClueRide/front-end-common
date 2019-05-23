@@ -32,6 +32,7 @@ export class ProfileConfirmationService {
 
   /**
    * Trigger the event indicating we've authenticated, but not yet confirmed.
+   * @deprecated Use the RegState event instead.
    */
   receiveAuthorization() {
     this.confirmationSubject.next(

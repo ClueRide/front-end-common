@@ -1,19 +1,11 @@
-import {AuthService} from "../../providers/auth/auth.service";
 import {Component} from '@angular/core';
-import {ConfirmPage} from "../confirm/confirm";
-import {IonicPage, NavController} from 'ionic-angular';
+import {IonicPage} from 'ionic-angular';
 import {PlatformStateService} from "../../providers/platform-state/platform-state.service";
-import {ProfileConfirmationService} from "../../providers/profile-confirmation-service/profile-confirmation-service";
-// tslint:disable-next-line
 import {Title} from "@angular/platform-browser";
-// tslint:disable-next-line
-import {Subscription} from "rxjs";
+import {RegStateService} from "../../providers/reg-state/reg-state.service";
 
 /**
- * Generated class for the RegistrationPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
+ * Presents the registration choices to the user.
  */
 
 @IonicPage()
@@ -22,37 +14,38 @@ import {Subscription} from "rxjs";
   templateUrl: 'registration.html',
 })
 export class RegistrationPage {
-  private confirmationStateSubscription: Subscription;
 
   constructor(
-    public auth: AuthService,
-    public platformState: PlatformStateService,
-    public profileConfirmationService: ProfileConfirmationService,
-    public navCtrl: NavController,
-    public titleService: Title,
+    private regState: RegStateService,
+    private platformState: PlatformStateService,
+    private titleService: Title,
   ) {
+    console.log("RegistrationPage constructor");
   }
 
   ionViewDidEnter() {
     this.titleService.setTitle("Registration");
-
-    /** Add ourselves to the list of profile listeners. */
-    this.confirmationStateSubscription = this.profileConfirmationService.confirmationState$.subscribe(
-      (confirmationState) =>    {
-        if (confirmationState.authenticated && !confirmationState.confirmed) {
-          console.log("Have Authentication, but email is not yet confirmed");
-          this.navCtrl.push(ConfirmPage)
-            .then()
-            .catch();
-        } else {
-          console.log("Confirmation State: " + JSON.stringify(confirmationState));
-        }
-      }
-    );
   }
 
-  ionViewWillLeave() {
-    this.confirmationStateSubscription.unsubscribe();
+  /**
+   * Accepts user choice of registering via Social Media and delegates to RegStateService.
+   *
+   * This choice is preferred because we can pickup an image for the user.
+   */
+  public registerSocial(): void {
+    this.regState.registerSocial();
+  }
+
+  /**
+   * Accepts user choice of registering via Email and delegates to RegStateService.
+   */
+  public registerEmail(): void {
+    this.regState.registerPasswordless();
+  }
+
+  // TODO: Are we ready to break the BDD Register button?
+  public shouldHideBDD(): boolean {
+    return this.platformState.isNativeMode();
   }
 
 }
