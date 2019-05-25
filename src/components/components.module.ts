@@ -3,7 +3,7 @@ import {ModuleWithProviders, NgModule} from '@angular/core';
 import {IonicStorageModule} from "@ionic/storage";
 
 import {AttractionService} from "../providers/attraction/attraction-service";
-import {AuthService} from "../providers/auth/auth.service";
+import {Auth0ConfigService} from "../providers/auth0Config/Auth0ConfigService";
 import {BadgeService} from "../providers/badge/badge.service";
 import {ConfirmPageModule} from "../pages/confirm/confirm.module";
 import {CourseService} from "../providers/course/course-service";
@@ -21,7 +21,6 @@ import {OutingService} from "../providers/outing/outing.service";
 import {PathService} from "../providers/path/path.service";
 import {PlatformStateService} from "../providers/platform-state/platform-state.service";
 import {ProfileService} from "../providers/profile/profile.service";
-import {ProfileConfirmationService} from "../providers/profile-confirmation-service/profile-confirmation-service";
 import {PuzzleService} from "../providers/puzzle/puzzle-service";
 import {RegistrationPageModule} from "../pages/registration/registration.module";
 import {RegStateService} from "../providers/reg-state/reg-state.service";
@@ -46,7 +45,7 @@ export class ComponentsModule {
       ngModule: ComponentsModule,
       providers: [
         AttractionService,
-        AuthService,
+        Auth0ConfigService,
         BadgeService,
         CourseService,
         DeviceGeoLocService,
@@ -62,7 +61,6 @@ export class ComponentsModule {
         PathService,
         PlatformStateService,
         ProfileService,
-        ProfileConfirmationService,
         PuzzleService,
         RegStateService,
         RegistrationPageModule,

@@ -1,5 +1,5 @@
 import Auth0Cordova from "@auth0/cordova";
-import {AUTH_CONFIG} from "../auth/auth0-variables";
+import {Auth0ConfigService} from "../auth0Config/Auth0ConfigService";
 import {BASE_URL, HttpService} from "../http/http.service";
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
@@ -7,33 +7,11 @@ import {RegState} from "./reg-state";
 import {Observable} from "rxjs/Observable";
 import {BehaviorSubject, Subject} from "rxjs";
 import {PlatformStateService} from "../platform-state/platform-state.service";
-import {REGISTRATION_TYPE} from "../auth/registration-type";
+import {REGISTRATION_TYPE} from "../auth0Config/registration-type";
 import {RenewalService} from "../renewal/renewal.service";
 import {TokenService} from "../token/token.service";
 import {RegStateKey} from "./reg-state-key";
 import {ProfileService} from "../profile/profile.service";
-
-let auth0Config = {};
-
-auth0Config[REGISTRATION_TYPE.SOCIAL] = {
-  // needed for auth0
-  clientID: AUTH_CONFIG.clientID.social,
-
-  // needed for auth0cordova
-  clientId: AUTH_CONFIG.clientID.social,
-  domain: AUTH_CONFIG.domain.social,
-  packageIdentifier: 'com.clueride.client'  // Not obvious that this is used to build callback URL.
-};
-
-auth0Config[REGISTRATION_TYPE.PASSWORDLESS] = {
-  // needed for auth0
-  clientID: AUTH_CONFIG.clientID.passwordless,
-
-  // needed for auth0cordova
-  clientId: AUTH_CONFIG.clientID.passwordless,
-  domain: AUTH_CONFIG.domain.passwordless,
-  packageIdentifier: 'com.clueride.client'  // Not obvious that this is used to build callback URL.
-};
 
 /**
  * Implements much of the State Diagram shown on the
@@ -47,6 +25,7 @@ export class RegStateService {
 
   constructor(
     public http: HttpClient,
+    private auth0ConfigService: Auth0ConfigService,
     private httpService: HttpService,
     private platformState: PlatformStateService,
     private tokenService: TokenService,
@@ -84,7 +63,7 @@ export class RegStateService {
     };
 
     /* Record which client needs registration. */
-    this.setUrlScheme(urlScheme);
+    this.auth0ConfigService.setUrlScheme(urlScheme);
 
     if (!this.platformState.isNativeMode()) {
       this.tokenService.bddRegister();
@@ -109,7 +88,6 @@ export class RegStateService {
       /* Request client to pass control to the Registration Page. */
       this.regStateSubject.next(new RegState(RegStateKey.REGISTRATION_REQUIRED, "No Tokens"));
     }
-
 
     return this.regStateSubject.asObservable();
   }
@@ -142,10 +120,11 @@ export class RegStateService {
    * @param registrationType
    */
   private register(registrationType: string) {
-    const client = new Auth0Cordova(auth0Config[registrationType]);
+    const client = new Auth0Cordova(
+      this.auth0ConfigService.getConfig(registrationType));
     const options = {
       scope: 'openid profile email offline_access',
-      audience: 'https://' + auth0Config[registrationType].domain + '/userinfo'
+      audience: 'https://' + this.auth0ConfigService.getDomain(registrationType) + '/userinfo'
     };
 
     /**
@@ -202,25 +181,10 @@ export class RegStateService {
   }
 
   /**
-   * Set the string by which Callback functions recognize the client app being registered.
-   *
-   * The callback URL is built from the "packageIdentifier" that is set in the
-   * Config object. This is specific to each client and generally would come from the
-   * request to provide Registration State.
-   *
-   * NOTE: the scheme needs to also be configured in the 'customurlscheme' plugin and
-   * on the Auth0 website's list of valid callback URLs.
-   * @param scheme - matches the client's unique package identifier -- basically, which app is
-   * calling Auth0.
-   */
-  private setUrlScheme(scheme: string) {
-    auth0Config[REGISTRATION_TYPE.SOCIAL].packageIdentifier = scheme;
-    auth0Config[REGISTRATION_TYPE.PASSWORDLESS].packageIdentifier = scheme;
-  }
-
-  /**
    * Talks to the backend to give it a chance to look at the Auth Headers and tell us if
    * it likes what it sees.
+   *
+   * TODO: This will probably go into a different service.
    */
   public isRegistered(): Observable<boolean> {
     return this.http.get<boolean>(

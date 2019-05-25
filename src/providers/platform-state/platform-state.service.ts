@@ -26,16 +26,4 @@ export class PlatformStateService {
     return this.platform.is('cordova');
   }
 
-  /**
-   * Looks at the current server location to tell if we're testing or not.
-   * @deprecated
-   * @returns {boolean}
-   */
-  public runningLocal() {
-    return (
-      /* TODO: Probably want to make this a configurable string. */
-      window.location.toString().indexOf('http://localhost:8100') === 0
-    );
-  }
-
 }

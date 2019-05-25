@@ -1,7 +1,7 @@
 import {Injectable} from "@angular/core";
 import {STORAGE_KEYS} from "../storage-keys";
 import {BddMockToken} from "./bddMockToken";
-import {REGISTRATION_TYPE} from "../auth/registration-type";
+import {REGISTRATION_TYPE} from "../auth0Config/registration-type";
 
 /* Period within which we renew an expiring token in milliseconds. */
 export const EXPIRATION_GRACE_MILLIS: number = 4 * 3600 * 1000;
