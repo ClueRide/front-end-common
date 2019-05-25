@@ -1,5 +1,5 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
+import {Platform} from "ionic-angular";
 
 /**
  * Holds status of the Platform.
@@ -7,12 +7,28 @@ import { Injectable } from '@angular/core';
 @Injectable()
 export class PlatformStateService {
 
-  constructor(public http: HttpClient) {
-    console.log('Hello PlatformStateService Provider');
+  constructor(
+    private platform: Platform,
+  ) {
+    console.log('PlatformState construction-time platforms:', this.platform._platforms);
+    this.platform.ready()
+      .then(
+        () => {console.log('PlatformState device ready platforms:', this.platform._platforms)}
+      ).catch(
+      (error) => {throw error;}
+    )
+  }
+
+  /**
+   * Uses the ionic Platform to tell us if we have access to Native functionality on this platform.
+   */
+  public isNativeMode(): boolean {
+    return this.platform.is('cordova');
   }
 
   /**
    * Looks at the current server location to tell if we're testing or not.
+   * @deprecated
    * @returns {boolean}
    */
   public runningLocal() {

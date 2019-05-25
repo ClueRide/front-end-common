@@ -1,16 +1,11 @@
 import {Component} from "@angular/core";
-import {IonicPage, NavController} from "ionic-angular";
-import {AuthService} from "../../providers/auth/auth.service";
+import {IonicPage} from "ionic-angular";
 // tslint:disable-next-line
 import {Title} from "@angular/platform-browser";
-import {ProfileConfirmationService} from "../../providers/profile-confirmation-service/profile-confirmation-service";
-import {ProfileService} from "../../providers/profile/profile.service";
+import {RegStateService} from "../../providers/reg-state/reg-state.service";
 
 /**
- * Generated class for the ConfirmPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
+ * Responsible for presenting the user with their Profile and asking confirmation against that profile.
  */
 
 @IonicPage()
@@ -21,11 +16,8 @@ import {ProfileService} from "../../providers/profile/profile.service";
 export class ConfirmPage {
 
   constructor(
-    public auth: AuthService,
-    public profileConfirmationService: ProfileConfirmationService,
-    public profile: ProfileService,
-    public navCtrl: NavController,
-    public titleService: Title,
+    private regStateService: RegStateService,
+    private titleService: Title,
   ) {
   }
 
@@ -35,29 +27,16 @@ export class ConfirmPage {
 
   ionViewDidEnter() {
     this.titleService.setTitle("Confirm Email");
-    this.profile.loadMemberProfile();
-  }
-
-  private returnToRegistrationPage(): Promise<any> {
-    return this.navCtrl.pop();
   }
 
   public useThisEmail() {
     console.log("Use this Email");
-    this.profileConfirmationService.confirm(
-      {
-        authenticated: true,
-        confirmed: true
-      }
-    );
+    this.regStateService.confirm();
   }
 
   public chooseDifferentEmail() {
     console.log("Choose different Email");
-    this.auth.logout();
-    this.returnToRegistrationPage()
-      .then()
-      .catch();
+    this.regStateService.retry();
   }
 
 }

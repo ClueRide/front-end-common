@@ -7,11 +7,15 @@ import {BASE_URL, HttpService} from "../http/http.service";
 import {Member} from "./member";
 // tslint:disable-next-line
 import {Observable} from "rxjs";
+import {TokenService} from "../token/token.service";
 
 /**
- * Knows about the email address and image URL from (back-end) principal service.
- * This data should be loaded from the Current Active Member REST endpoint shortly after
- * the session is established.
+ * Responsible for the Member's Profile.
+ *
+ * Initially, this comes from a JWT token and is used to present the profile to the
+ * user for confirmation. Once confirmed, the profile can be cross-checked with the
+ * backend -- once the corresponding *active* Access Token has been established with
+ * the backend.
  */
 @Injectable()
 export class ProfileService {
@@ -29,12 +33,15 @@ export class ProfileService {
 
   constructor (
     public http: HttpClient,
-    private httpService: HttpService
+    private httpService: HttpService,
+    private tokenService: TokenService,
   ) {
   }
 
   /**
    * Client's call this to obtain the session's profile for caching.
+   *
+   * This depends on an Active Access Token.
    */
   public loadMemberProfile(): Observable<Member> {
     return this.http.get<Member>(
@@ -50,6 +57,23 @@ export class ProfileService {
       }
     )
       .share();
+  }
+
+  /**
+   * Turns a JWT-based token from 3rd-party auth service into our Member representation.
+   *
+   * @param jwtToken
+   */
+  public fromJwt(jwtToken: string): Member {
+    let jwtProfile = this.tokenService.decodePayload(jwtToken);
+    this.member = new Member();
+    this.member.displayName = jwtProfile.name;
+    this.member.firstName = jwtProfile.given_name;
+    this.member.lastName = jwtProfile.family_name;
+    this.member.email = jwtProfile.email;
+    this.member.emailAddress = jwtProfile.email;
+    this.member.imageUrl = jwtProfile.picture;
+    return this.member;
   }
 
   public getPrincipal(): string {
@@ -87,6 +111,11 @@ export class ProfileService {
   /* Provides the ID of the profile, the Member ID. */
   public getCurrentMemberId() {
     return this.member.id;
+  }
+
+  // TODO: Implement this and return an Observable.
+  public crossCheckProfile(): void {
+      console.log("Talking to the backend to crosscheck the User Profile");
   }
 
 }

@@ -208,7 +208,6 @@ export class AuthService {
 
         /* Signal we've got a profile that is not yet confirmed. */
         this.profileConfirmationService.receiveAuthorization();
-        // TODO: Maybe PLAY-86 Fail to show email address to be confirmed.
       }
     );
 
