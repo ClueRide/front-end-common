@@ -5,6 +5,7 @@ import {IonicStorageModule} from "@ionic/storage";
 import {AttractionService} from "../providers/attraction/attraction-service";
 import {Auth0ConfigService} from "../providers/auth0Config/Auth0ConfigService";
 import {BadgeService} from "../providers/badge/badge.service";
+import {BadgeProgressService} from "../providers/badge-progress/badge-progress.service";
 import {ConfirmPageModule} from "../pages/confirm/confirm.module";
 import {CourseService} from "../providers/course/course-service";
 import {DeviceGeoLocService} from "../providers/device-geo-loc/device-geo-loc.service";
@@ -47,6 +48,7 @@ export class ComponentsModule {
         AttractionService,
         Auth0ConfigService,
         BadgeService,
+        BadgeProgressService,
         CourseService,
         DeviceGeoLocService,
         EdgeService,

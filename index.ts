@@ -2,10 +2,14 @@
  * Created by jett on 1/1/18.
  */
 
+export { Achievement } from "./src/providers/badge-progress/achievement";
 export { Answer, AnswerKey } from "./src/providers/puzzle/answer";
 export { Attraction } from "./src/providers/attraction/attraction";
 export { AttractionService } from "./src/providers/attraction/attraction-service";
 export { Badge } from "./src/providers/badge/badge";
+export { BadgeFeatures } from "./src/providers/badge-progress/badge-features";
+export { BadgeProgress } from "./src/providers/badge-progress/badge-progress";
+export { BadgeProgressService } from "./src/providers/badge-progress/badge-progress.service";
 export { BadgeService } from "./src/providers/badge/badge.service";
 export { Category } from "./src/providers/category/category";
 export { ComponentsModule } from "./src/components/components.module";
@@ -37,6 +41,7 @@ export { Path } from "./src/providers/path/path";
 export { PathService } from "./src/providers/path/path.service";
 export { PlatformStateService } from "./src/providers/platform-state/platform-state.service";
 export { ProfileService} from "./src/providers/profile/profile.service";
+export { Progress } from "./src/providers/badge-progress/progress";
 export { Puzzle } from "./src/providers/puzzle/puzzle";
 export { PuzzleService } from "./src/providers/puzzle/puzzle-service";
 export { RegState } from "./src/providers/reg-state/reg-state";
@@ -44,6 +49,7 @@ export { RegStateKey } from "./src/providers/reg-state/reg-state-key";
 export { RegStateService } from "./src/providers/reg-state/reg-state.service";
 export { RegistrationPage } from "./src/pages/registration/registration";
 export { SessionInviteState } from "./src/providers/invite/sessionInviteState";
+export { Step } from "./src/providers/badge-progress/step";
 export { Team } from "./src/providers/team/team";
 export { TeamService } from "./src/providers/team/team-service";
 export { TokenService } from "./src/providers/token/token.service";
