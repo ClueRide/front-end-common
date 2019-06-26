@@ -11,6 +11,7 @@ export { BadgeFeatures } from "./src/providers/badge-progress/badge-features";
 export { BadgeProgress } from "./src/providers/badge-progress/badge-progress";
 export { BadgeProgressService } from "./src/providers/badge-progress/badge-progress.service";
 export { BadgeService } from "./src/providers/badge/badge.service";
+export { BadgesPerLevelModule } from "./src/components/badges-per-level/badges-per-level.module";
 export { Category } from "./src/providers/category/category";
 export { ComponentsModule } from "./src/components/components.module";
 export { ConfirmPage } from "./src/pages/confirm/confirm";
