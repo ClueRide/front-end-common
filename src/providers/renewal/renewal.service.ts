@@ -19,6 +19,7 @@ export class RenewalService {
     private auth0ConfigService: Auth0ConfigService,
   ) {
     this.registrationType = this.tokenService.getRegistrationType();
+    console.debug("Renewing for Registration Type: ", this.registrationType);
     this.postBody = {
       grant_type: 'refresh_token',
       client_id: this.auth0ConfigService.getClientID(this.registrationType),

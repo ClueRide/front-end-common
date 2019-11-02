@@ -10,7 +10,7 @@ import {BddMockToken} from "./bddMockToken";
 import {ProfileService} from "../profile/profile.service";
 import {SecureStorageMock} from "@ionic-native-mocks/secure-storage";
 import {SecureStorage} from "@ionic-native/secure-storage";
-import {REGISTRATION_TYPE} from "../auth/registration-type";
+import {REGISTRATION_TYPE} from "../auth0Config/registration-type";
 
 let toTest: TokenService;
 let bddMockToken: BddMockToken = new BddMockToken;

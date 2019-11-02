@@ -7,4 +7,5 @@ export class Member {
   imageUrl: string;
   email: string;
   emailAddress: string;
+  badgeOSId: number;
 }
