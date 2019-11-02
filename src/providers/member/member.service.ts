@@ -29,4 +29,18 @@ export class MemberService {
     );
   }
 
+  /**
+   * Invoked when the user has confirmed the email address
+   * they want to use.
+   * This is also a signal that registration is successful.
+   * @param member
+   */
+  crossCheckMember(member: Member): Observable<Member> {
+    return this.http.post<Member>(
+      BASE_URL + 'member/cross-check',
+      member,
+      {headers: this.httpService.getAuthHeaders()}
+    );
+  }
+
 }

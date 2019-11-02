@@ -29,6 +29,7 @@ export class ProfileService {
     imageUrl: "",
     email: "",
     emailAddress: "",
+    badgeOSId: null,
   };
 
   constructor (
@@ -113,7 +114,7 @@ export class ProfileService {
     return this.member.id;
   }
 
-  // TODO: Implement this and return an Observable.
+  // TODO: FEC-57 Implement this and return an Observable.
   public crossCheckProfile(): void {
       console.log("Talking to the backend to crosscheck the User Profile");
   }
